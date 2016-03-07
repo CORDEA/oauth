@@ -37,7 +37,7 @@ when isMainModule:
     echo "Please enter the consumer key secret (API Secret)."
     let consumerSecret = readLine stdin
 
-    let requestToken = getOAuth1RequestToken(requestTokenUrl, consumerKey, consumerSecret, "oob", isIncludeVersionToHeader = true)
+    let requestToken = getOAuth1RequestToken(requestTokenUrl, consumerKey, consumerSecret, isIncludeVersionToHeader = true)
 
     if requestToken.status == "200 OK":
         var response = parseResponseBody requestToken.body
