@@ -118,70 +118,9 @@ proc createRequestHeader(params: HeaderParams, extraHeaders: string): string =
     else:
         result = result & subex(", oauth_version=\"$#\"\c\L") % [ params.version ]
 
-proc getOAuth1RequestToken*(url, consumerKey, consumerSecret: string,
-    callback = "oob", isIncludeVersionToHeader = false,
-    httpMethod = httpPOST, extraHeaders = "", body = "",
-    timeout = -1, userAgent = defUserAgent, proxy: Proxy = nil,
-    realm: string = nil, nonce: string = nil): Response =
-    let
-        timestamp = round epochTime()
-        nonce = if nonce == nil: createNonce() else: nonce
-    var
-        body = body
-        params = HeaderParams(
-            realm: realm,
-            consumerKey: consumerKey,
-            signatureMethod: signatureMethod,
-            timestamp: $timestamp,
-            nonce: nonce,
-            callback: callback)
-    if isIncludeVersionToHeader:
-        params.version = version
-    let
-        signatureBaseString = createSignatureBaseString(httpPOST, url, headerParams2Pairs params)
-        signature = hmac_sha1(createKey(consumerSecret, ""), signatureBaseString).toBase64
-
-    params.signature = percentEncode signature
-    let header = createRequestHeader(params, extraHeaders)
-    result = request(url, httpMethod = httpMethod,
-        extraHeaders = header, body = body, timeout = timeout,
-        userAgent = userAgent, proxy = proxy)
-
-proc getAuthorizeUrl*(url, requestToken: string): string =
-    result = url & "?oauth_token=" & requestToken
-
-proc getOAuth1AccessToken*(url, consumerKey, consumerSecret,
-    requestToken, requestTokenSecret, verifier: string,
-    isIncludeVersionToHeader = false, httpMethod = httpPOST, extraHeaders = "", body = "",
-    timeout = -1, userAgent = defUserAgent, proxy: Proxy = nil,
-    nonce: string = nil, realm: string = nil): Response = 
-    let
-        timestamp = round epochTime()
-        nonce = if nonce == nil: createNonce() else: nonce
-    var
-        params = HeaderParams(
-            realm: realm,
-            consumerKey: consumerKey,
-            signatureMethod: signatureMethod,
-            token: requestToken,
-            timestamp: $timestamp,
-            nonce: nonce,
-            verifier: verifier)
-    if isIncludeVersionToHeader:
-        params.version = version
-    let
-        signatureBaseString = createSignatureBaseString(httpPOST, url, headerParams2Pairs params)
-        signature = hmac_sha1(createKey(consumerSecret, requestTokenSecret), signatureBaseString).toBase64
-
-    params.signature = percentEncode signature
-    let header = createRequestHeader(params, extraHeaders)
-    result = request(url, httpMethod = httpMethod,
-        extraHeaders = header, body = body, timeout = timeout,
-        userAgent = userAgent, proxy = proxy)
-
-proc oAuth1Request*(url, consumerKey, consumerSecret, token, tokenSecret: string,
+proc oAuth1Request(url, consumerKey, consumerSecret: string,
+    callback, token, verifier: string = nil, tokenSecret = "",
     isIncludeVersionToHeader = false, httpMethod = httpGET, extraHeaders = "", body = "",
-    timeout = -1, userAgent = defUserAgent, proxy: Proxy = nil,
     nonce: string = nil, realm: string = nil):Response =
 
     let
@@ -194,20 +133,51 @@ proc oAuth1Request*(url, consumerKey, consumerSecret, token, tokenSecret: string
             consumerKey: consumerKey,
             nonce: nonce, 
             signatureMethod: signatureMethod,
-            timestamp: $timestamp,
-            token: token)
+            timestamp: $timestamp)
     if isIncludeVersionToHeader:
         params.version = version
+    if callback != nil:
+        params.callback = callback
+    if token != nil:
+        params.token = token
+    if verifier != nil:
+        params.verifier = verifier
     let
         signatureBaseString = createSignatureBaseString(httpMethod, url, headerParams2Pairs params)
         signature = hmac_sha1(createKey(consumerSecret, tokenSecret),
                                     signatureBaseString).toBase64
 
     params.signature = percentEncode(signature)
-    let headers = createRequestHeader(params, extraHeaders)
+    let header = createRequestHeader(params, extraHeaders)
     result = request(url, httpMethod = httpMethod,
-        extraHeaders = headers, body = body, timeout = timeout,
-        userAgent = userAgent, proxy = proxy)
+        extraHeaders = header, body = body)
+
+proc getOAuth1RequestToken*(url, consumerKey, consumerSecret: string,
+    callback = "oob", isIncludeVersionToHeader = false,
+    httpMethod = httpPOST, extraHeaders = "", body = "",
+    realm: string = nil, nonce: string = nil): Response =
+    result = oAuth1Request(url, consumerKey, consumerSecret,
+        callback, nil, nil, "", isIncludeVersionToHeader,
+        httpMethod, extraHeaders, body, realm, nonce)
+    
+proc getAuthorizeUrl*(url, requestToken: string): string =
+    result = url & "?oauth_token=" & requestToken
+
+proc getOAuth1AccessToken*(url, consumerKey, consumerSecret,
+    requestToken, requestTokenSecret, verifier: string,
+    isIncludeVersionToHeader = false, httpMethod = httpPOST, extraHeaders = "", body = "",
+    nonce: string = nil, realm: string = nil): Response = 
+    result = oAuth1Request(url, consumerKey, consumerSecret,
+        nil, requestToken, verifier, requestTokenSecret,
+        isIncludeVersionToHeader, httpMethod, extraHeaders, body, nonce, realm)
+    
+proc oAuth1Request*(url, consumerKey, consumerSecret, token, tokenSecret: string,
+    isIncludeVersionToHeader = false, httpMethod = httpGET, extraHeaders = "", body = "",
+    timeout = -1, userAgent = defUserAgent, proxy: Proxy = nil,
+    nonce: string = nil, realm: string = nil):Response =
+    result = oAuth1Request(url, consumerKey, consumerSecret,
+        nil, token, nil, tokenSecret,
+        isIncludeVersionToHeader, httpMethod, extraHeaders, body, nonce, realm)
 
 when isMainModule:
     if TEST:

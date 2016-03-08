@@ -19,14 +19,13 @@ import math, httpclient
 import base64
 import tables
 
+# From https://github.com/nim-lang/Nim/blob/master/lib/pure/cgi.nim#L34.
 proc percentEncode*(str: string): string =
     result = ""
     for s in str:
         case s
         of 'a'..'z', 'A'..'Z', '0'..'9', '-', '.', '_', '~':
             result = result & s
-        of ' ':
-            result = result & '+'
         else:
             result = result & '%' & toHex(ord s, 2)
 
