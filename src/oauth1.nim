@@ -20,7 +20,7 @@ import httpclient, uri
 import subexes
 import algorithm
 import strtabs
-import util
+import oauthutils
 
 const 
     TEST = false

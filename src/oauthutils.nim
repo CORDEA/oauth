@@ -17,6 +17,7 @@
 import times, strutils
 import math, httpclient
 import base64
+import tables
 
 proc percentEncode*(str: string): string =
     result = ""
@@ -61,3 +62,9 @@ proc httpMethod2String*(httpMethod: HttpMethod): string =
     of httpCONNECT:
         result = "CONNECT"
 
+proc parseResponseBody*(body: string): Table[string, string] =
+    let responses = body.split("&")
+    result = initTable[string, string]()
+    for response in responses:
+        let r = response.split("=")
+        result[r[0]] = r[1]
