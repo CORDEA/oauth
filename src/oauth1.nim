@@ -20,6 +20,7 @@ import httpclient, uri
 import subexes
 import algorithm
 import strtabs
+import util
 
 const 
     TEST = false
@@ -53,34 +54,6 @@ proc headerParams2Pairs(params: HeaderParams): seq[Pair] =
     if params.verifier != nil:
         result.add  initPair("oauth_verifier", params.verifier)
 
-proc httpMethod2String(httpMethod: HttpMethod): string = 
-    case httpMethod
-    of httpHEAD:
-        result = "HEAD"
-    of httpGET:
-        result = "GET"
-    of httpPOST:
-        result = "POST"
-    of httpPUT:
-        result = "PUT"
-    of httpDELETE:
-        result = "DELETE"
-    of httpTRACE:
-        result = "TRACE"
-    of httpOPTIONS:
-        result = "OPTIONS"
-    of httpCONNECT:
-        result = "CONNECT"
-
-proc percentEncode*(str: string): string =
-    result = ""
-    for s in str:
-        case s
-        of 'a'..'z', 'A'..'Z', '0'..'9', '-', '.', '_', '~':
-            result = result & s
-        else:
-            result = result & '%' & toHex(ord s, 2)
-
 proc parameterNormarization(parameters: seq[Pair]): string =
     var
         enParams: seq[Pair] = @[]
@@ -98,19 +71,6 @@ proc parameterNormarization(parameters: seq[Pair]): string =
         joinParams.add(p.key & "=" & p.value)
 
     result = joinParams.join "&"
-
-proc createNonce(): string =
-    let epoch = $epochTime()
-    var
-        rst = ""
-        r = 0
-
-    randomize()
-    for i in 0..(23 - len(epoch)):
-        r = random(26)
-        rst = rst & chr(97 + r)
-
-    result = encode(rst & epoch)
 
 proc createSignatureBaseString(httpMethod: HttpMethod, url: string, request: seq[Pair]): string =
     var (url, request) = (url, request)
