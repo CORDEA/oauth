@@ -82,7 +82,6 @@ proc accessTokenRequest(url, clientId, clientSecret: string, grantType: GrantTyp
 
     let extraHeaders = basicAuthorizationHeader(clientId, clientSecret)
     let header = createRequestHeader(extraheaders, body)
-    echo header
     result = request(url, httpMethod = httpPOST,
         extraHeaders = header, body = body)
 
@@ -173,6 +172,10 @@ proc bearerRequest*(url, accessToken: string, httpMethod = httpGET, extraHeaders
         extraHeaders = "Authorization: Bearer " & accessToken  & "\c\L" & extraHeaders
         header = createRequestHeader(extraHeaders, body)
     result = request(url, httpMethod = httpMethod, extraHeaders = header, body = body)
+
+when not defined(ssl):
+    echo "SSL support is required."
+    quit 1
 
 when isMainModule:
     let header = basicAuthorizationHeader("Aladdin", "open sesame")
