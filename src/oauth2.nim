@@ -88,6 +88,7 @@ proc accessTokenRequest(url, clientId, clientSecret: string, grantType: GrantTyp
 proc getAuthorizationCodeAccessToken*(url, code, clientId, clientSecret: string, redirectUri: string = nil): Response =
     result = accessTokenRequest(url, clientId, clientSecret, AuthorizationCode, code, redirectUri)
 
+# ref. https://github.com/nim-lang/Nim/blob/master/lib/pure/asynchttpserver.nim#L154
 proc getCallbackParamters(port: Port, html: string): Future[Uri] {.async.} =
     let socket = newAsyncSocket()
     socket.bindAddr(port)
