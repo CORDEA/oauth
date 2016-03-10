@@ -41,7 +41,7 @@ proc createRequestHeader(extraHeaders: string, body: string): string =
     result = concatHeader(result, extraHeaders)
 
 proc getGrantUrl(url, clientId: string, grantType: GrantType,
-    redirectUri, state: string = nil, scope: seq[string] = nil): string = 
+    redirectUri, state: string = nil, scope: openarray[string] = nil): string = 
     var url = url
     let parsed = parseUri(url)
     url = url & (if parsed.query == "": "?" else: "&")
@@ -53,11 +53,11 @@ proc getGrantUrl(url, clientId: string, grantType: GrantType,
     result = url
 
 proc getAuthorizationCodeGrantUrl*(url, clientId: string,
-    redirectUri, state: string = nil, scope: seq[string] = nil): string =
+    redirectUri, state: string = nil, scope: openarray[string] = nil): string =
     result = getGrantUrl(url, clientId, AuthorizationCode, redirectUri, state, scope)
 
 proc getImplicitGrantUrl*(url, clientId: string,
-    redirectUri, state: string = nil, scope: seq[string] = nil): string =
+    redirectUri, state: string = nil, scope: openarray[string] = nil): string =
     result = getGrantUrl(url, clientId, Implicit, redirectUri, state, scope)
 
 proc basicAuthorizationHeader(clientId, clientSecret: string): string =
@@ -66,7 +66,7 @@ proc basicAuthorizationHeader(clientId, clientSecret: string): string =
     result = "Authorization: Basic " & result & "\c\L"
 
 proc accessTokenRequest(url, clientId, clientSecret: string, grantType: GrantType,
-    code, redirectUri, username, password: string = nil, scope: seq[string] = nil): Response =
+    code, redirectUri, username, password: string = nil, scope: openarray[string] = nil): Response =
     var body = "grant_type=" & $grantType
     if grantType == ResourceOwnerPassCreds:
         body = subex("&username=$#&password=$#") % [ username, password ]
@@ -133,7 +133,7 @@ proc createState(): string =
         result = result & chr(97 + r)
 
 proc authorizationCodeGrant*(authorizeUrl, accessTokenRequestUrl, clientId, clientSecret: string,
-    html: string = nil, scope: seq[string] = nil, port: int = 8080): Response =
+    html: string = nil, scope: openarray[string] = nil, port: int = 8080): Response =
     var html = html
     if html == nil:
         html = ""
@@ -148,7 +148,8 @@ proc authorizationCodeGrant*(authorizeUrl, accessTokenRequestUrl, clientId, clie
         params = parseResponseBody(uri.query)
     result = getAuthorizationCodeAccessToken(accessTokenRequestUrl, params["code"], clientId, clientSecret, redirectUri)
 
-proc implicitGrant*(url, clientId: string, html: string = nil, scope: seq[string] = nil, port: int = 8080): string =
+proc implicitGrant*(url, clientId: string, html: string = nil,
+    scope: openarray[string] = nil, port: int = 8080): string =
     var html = html
     if html == nil:
         html = ""
@@ -161,10 +162,10 @@ proc implicitGrant*(url, clientId: string, html: string = nil, scope: seq[string
     let uri = waitFor getCallbackParamters(Port(port), html)
     result = uri.query
 
-proc resourceOwnerPassCredsGrant*(url, clientId, clientSecret, username, password: string, scope: seq[string] = nil): Response = 
+proc resourceOwnerPassCredsGrant*(url, clientId, clientSecret, username, password: string, scope: openarray[string] = nil): Response = 
     result = accessTokenRequest(url, clientId, clientSecret, ResourceOwnerPassCreds, username = username, password = password, scope = scope)
     
-proc clientCredsGrant*(url, clientid, clientsecret: string, scope: seq[string] = nil): Response = 
+proc clientCredsGrant*(url, clientid, clientsecret: string, scope: openarray[string] = nil): Response = 
     result = accessTokenRequest(url, clientId, clientSecret, ClientCreds, scope = scope)
     
 proc bearerRequest*(url, accessToken: string, httpMethod = httpGET, extraHeaders = "", body = ""): Response =
