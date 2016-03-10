@@ -19,7 +19,7 @@ import math, httpclient
 import base64
 import strtabs
 
-# From https://github.com/nim-lang/Nim/blob/master/lib/pure/cgi.nim#L34.
+# ref. https://github.com/nim-lang/Nim/blob/master/lib/pure/cgi.nim#L34.
 proc percentEncode*(str: string): string =
     result = ""
     for s in str:
