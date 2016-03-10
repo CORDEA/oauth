@@ -17,7 +17,7 @@
 import times, strutils
 import math, httpclient
 import base64
-import tables
+import strtabs
 
 # From https://github.com/nim-lang/Nim/blob/master/lib/pure/cgi.nim#L34.
 proc percentEncode*(str: string): string =
@@ -61,9 +61,9 @@ proc httpMethod2String*(httpMethod: HttpMethod): string =
     of httpCONNECT:
         result = "CONNECT"
 
-proc parseResponseBody*(body: string): Table[string, string] =
+proc parseResponseBody*(body: string): StringTableRef =
     let responses = body.split("&")
-    result = initTable[string, string]()
+    result = newStringTable(modeCaseInsensitive)
     for response in responses:
         let r = response.split("=")
         result[r[0]] = r[1]
