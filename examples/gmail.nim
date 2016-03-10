@@ -22,7 +22,7 @@ const
     authorizeUrl = "https://accounts.google.com/o/oauth2/v2/auth"
     accessTokenUrl = "https://accounts.google.com/o/oauth2/token"
 
-let html = "index.html".readFile()
+let html = "resources/index.html".readFile()
 
 echo "Please enter the client id."
 let clientId = readLine(stdin)

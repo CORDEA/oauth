@@ -23,7 +23,7 @@ const
     accessTokenUrl = "https://slack.com/api/oauth.access"
     url = "https://slack.com/api/channels.list"
 
-let html = "index.html".readFile()
+let html = "resources/index.html".readFile()
 
 echo "Please enter the client id."
 let clientId = readLine(stdin)
