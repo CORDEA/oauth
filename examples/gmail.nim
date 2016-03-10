@@ -29,6 +29,7 @@ let clientId = readLine(stdin)
 echo "Please enter the client secret."
 let clientSecret = readLine(stdin)
 
+echo "Please go to this url."
 let response = authorizationCodeGrant(authorizeUrl, accessTokenUrl,
     clientId, clientSecret, html, scope = @["https://www.googleapis.com/auth/gmail.readonly"])
 
