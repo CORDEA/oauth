@@ -21,6 +21,7 @@ import strtabs
 
 # ref. https://github.com/nim-lang/Nim/blob/master/lib/pure/cgi.nim#L34.
 proc percentEncode*(str: string): string =
+    ## Escape the character by using the percent encoding.
     result = ""
     for s in str:
         case s
@@ -30,6 +31,7 @@ proc percentEncode*(str: string): string =
             result = result & '%' & toHex(ord s, 2)
 
 proc createNonce*(): string =
+    ## Generate a nonce of 32byte.
     let epoch = $epochTime()
     var
         rst = ""
