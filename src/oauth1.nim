@@ -24,60 +24,58 @@ import httpclient, uri
 import subexes
 import algorithm
 import strtabs
-import oauthutils
+import oauthutils, sequtils
 
 const 
-    TEST = false
     signatureMethod = "HMAC-SHA1"
     version = "1.0"
 
 type
-    HeaderParams = ref object
-        realm, consumerKey, nonce, signature, signatureMethod, timestamp, token, version, callback, verifier: string
-    Pair = ref object
-        key, value: string
+    OAuth1Parameters* = ref object
+        realm*, consumerKey*, nonce*, signature*, signatureMethod*, timestamp*, token*, callback*, verifier*: string
+        isIncludeVersionToHeader*: bool
 
-proc initPair(key: string, value: string): Pair =
-    result = Pair()
-    result.key = key
-    result.value = value
-
-proc headerParams2Pairs(params: HeaderParams): seq[Pair] =
-    result = @[
-        initPair("oauth_consumer_key", params.consumerKey),
-        initPair("oauth_nonce", params.nonce),
-        initPair("oauth_signature_method", params.signatureMethod),
-        initPair("oauth_timestamp", params.timestamp),
-        ]
-    if params.token != nil:
-        result.add initPair("oauth_token", params.token)
+proc toArray(params: OAuth1Parameters): seq[array[2, string]] =
+    result = @[]
+    result.add(["oauth_consumer_key", params.consumerKey])
+    result.add(["oauth_nonce", params.nonce])
+    result.add(["oauth_signature_method", params.signatureMethod])
+    result.add(["oauth_timestamp", $params.timestamp])
+    if params.isIncludeVersionToHeader:
+        result.add(["oauth_version", version])
     if params.callback != nil:
-        result.add initPair("oauth_callback", params.callback)
-    if params.version != nil:
-        result.add initPair("oauth_version", params.version)
+        result.add(["oauth_callback", params.callback])
+    if params.token != nil:
+        result.add(["oauth_token", params.token])
     if params.verifier != nil:
-        result.add  initPair("oauth_verifier", params.verifier)
+        result.add(["oauth_verifier", params.verifier])
 
-proc parameterNormarization(parameters: seq[Pair]): string =
+proc parameterNormarization(parameters: seq[array[2, string]]): string =
     var
-        enParams: seq[Pair] = @[]
+        parameters = parameters
         joinParams: seq[string] = @[]
 
-    for p in parameters:
-        enParams.add initPair(percentEncode(p.key), percentEncode(p.value))
-
-    enParams.sort do (x, y: Pair) -> int:
-        result = cmp(x.key, y.key)
+    parameters.sort do (x, y: array[2, string]) -> int:
+        result = cmp(x[0], y[0])
         if result == 0:
-            result = cmp(x.value, y.value)
+            result = cmp(x[1], y[1])
 
-    for p in enParams:
-        joinParams.add(p.key & "=" & p.value)
+    for p in parameters:
+        joinParams.add(p[0] & "=" & p[1])
 
     result = joinParams.join "&"
 
-proc createSignatureBaseString(httpMethod: HttpMethod, url: string, request: seq[Pair]): string =
-    var (url, request) = (url, request)
+iterator parseQuery(queries: string): array[2, string] =
+    for r in queries.split("&"):
+        if r.contains "=":
+            let fd = r.find("=")
+            yield [r[0..fd-1], r[fd+1..len(r)]]
+
+proc getSignatureBaseString*(httpMethod: HttpMethod, url, body: string, params: OAuth1Parameters): string =
+    ## Generate a signature base string.
+    var url = url
+    var requests: seq[array[2, string]] = params.toArray()
+    requests = requests.map(proc (x: array[2, string]): array[2, string] = [percentEncode(x[0]), percentEncode(x[1])])
 
     let parsed = parseUri(url)
     if parsed.port == "":
@@ -86,26 +84,28 @@ proc createSignatureBaseString(httpMethod: HttpMethod, url: string, request: seq
         url = subex("$#://$#:$#$#") % [parsed.scheme, parsed.hostname, parsed.port, parsed.path]
     let queries = parsed.query
 
-    for r in queries.split("&"):
-        if r.contains '=':
-            var rp = r.split("=")
-            request.add(initPair(rp[0], rp[1]))
+    for r in queries.parseQuery():
+        requests.add(r)
+    for r in body.parseQuery():
+        requests.add(r)
 
-    let param = parameterNormarization(request)
+    let param = parameterNormarization(requests)
     result = httpMethod2String(httpMethod) & "&" & percentEncode(url) & "&" & percentEncode(param)
 
-proc createKey(consumerKey: string, token: string): string = 
+proc getSignatureKey*(consumerKey: string, token: string): string = 
+    ## Generate a signature key.
     result = percentEncode(consumerKey) & "&" & percentEncode(token)
 
-proc createRequestHeader(params: HeaderParams, extraHeaders: string): string =
+proc getOAuth1RequestHeader*(params: OAuth1Parameters, extraHeaders: string): string =
+    ## Generate the necessary header to a OAuth1 request.
     result = "Content-Type: application/x-www-form-urlencoded\c\L"
     result = result & extraHeaders
     if len(extraHeaders) > 0 and not extraHeaders.endsWith("\c\L"):
         result = result & "\c\L"
-    if params.realm == nil:
-        result = result & "Authorization: OAuth "
-    else:
+    if params.realm != nil:
         result = result & subex("Authorization: OAuth realm=\"$#\", ") % [ params.realm ]
+    else:
+        result = result & "Authorization: OAuth "
     result = result & subex("oauth_consumer_key=\"$#\", oauth_signature_method=\"$#\", oauth_timestamp=\"$#\", oauth_nonce=\"$#\", oauth_signature=\"$#\"") % [ params.consumerKey,
     params.signatureMethod,
     params.timestamp,
@@ -117,10 +117,10 @@ proc createRequestHeader(params: HeaderParams, extraHeaders: string): string =
         result = result & subex(", oauth_callback=\"$#\"") % [ params.callback ]
     if params.verifier != nil:
         result = result & subex(", oauth_verifier=\"$#\"") % [ params.verifier ]
-    if params.version == nil:
-        result = result & "\c\L"
+    if params.isIncludeVersionToHeader:
+        result = result & subex(", oauth_version=\"$#\"\c\L") % [ version ]
     else:
-        result = result & subex(", oauth_version=\"$#\"\c\L") % [ params.version ]
+        result = result & "\c\L"
 
 proc oAuth1Request(url, consumerKey, consumerSecret: string,
     callback, token, verifier: string = nil, tokenSecret = "",
@@ -130,29 +130,23 @@ proc oAuth1Request(url, consumerKey, consumerSecret: string,
     let
         timestamp = round epochTime()
         nonce = if nonce == nil: createNonce() else: nonce
-
-    var
-        params = HeaderParams(
+        params = OAuth1Parameters(
             realm: realm,
             consumerKey: consumerKey,
-            nonce: nonce, 
+            nonce: nonce,
             signatureMethod: signatureMethod,
-            timestamp: $timestamp)
-    if isIncludeVersionToHeader:
-        params.version = version
-    if callback != nil:
-        params.callback = callback
-    if token != nil:
-        params.token = token
-    if verifier != nil:
-        params.verifier = verifier
-    let
-        signatureBaseString = createSignatureBaseString(httpMethod, url, headerParams2Pairs params)
-        signature = hmac_sha1(createKey(consumerSecret, tokenSecret),
+            timestamp: $timestamp,
+            isIncludeVersionToHeader: isIncludeVersionToHeader,
+            callback: callback,
+            token: token,
+            verifier: verifier
+        )
+        signatureBaseString = getSignatureBaseString(httpMethod, url, body, params)
+        signature = hmac_sha1(getSignatureKey(consumerSecret, tokenSecret),
                                     signatureBaseString).toBase64
 
     params.signature = percentEncode(signature)
-    let header = createRequestHeader(params, extraHeaders)
+    let header = getOAuth1RequestHeader(params, extraHeaders)
     result = request(url, httpMethod = httpMethod,
         extraHeaders = header, body = body)
 
@@ -193,42 +187,6 @@ proc oAuth1Request*(url, consumerKey, consumerSecret, token, tokenSecret: string
         nil, token, nil, tokenSecret,
         isIncludeVersionToHeader, httpMethod, extraHeaders, body, nonce, realm)
 
-when isMainModule:
-    if TEST:
-        # https://dev.twitter.com/oauth/overview/authorizing-requests
-        var
-            url = "https://api.twitter.com/1/statuses/update.json"
-            consumer_secret = "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw"
-            token_secret = "LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE"
-            table = @[
-                        initPair("status", "Hello Ladies + Gentlemen, a signed OAuth request!"),
-                        initPair("include_entities", "true"),
-                        initPair("oauth_consumer_key", "xvz1evFS4wEEPTGEFPHBog"),
-                        initPair("oauth_nonce", "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg"),
-                        initPair("oauth_signature_method", "HMAC-SHA1"),
-                        initPair("oauth_timestamp", "1318622958"),
-                        initPair("oauth_token", "370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb"),
-                        initPair("oauth_version", "1.0")
-                    ]
-            signature_base_string = createSignatureBaseString(httpPOST, url, table)
-            key = createKey(consumer_secret, token_secret)
-            oauth_signature = hmac_sha1(key, signature_base_string).toBase64
-
-        doAssert oauth_signature == "tnnArxj06cWHq44gCs1OSKk/jLY="
-
-        # https://tools.ietf.org/html/rfc5849
-        url = "http://photos.example.net/photos?file=vacation.jpg&size=original"
-        consumer_secret = "kd94hf93k423kf44"
-        token_secret = "pfkkdhi9sl3r4s00"
-        table = @[
-                initPair("oauth_consumer_key", "dpf43f3p2l4k3l03"),
-                initPair("oauth_nonce", "chapoH"),
-                initPair("oauth_signature_method", "HMAC-SHA1"),
-                initPair("oauth_timestamp", "137131202"),
-                initPair("oauth_token", "nnch734d00sl2jdk")
-            ]
-        signature_base_string = createSignatureBaseString(httpGET, url, table)
-        key = createKey(consumer_secret, token_secret)
-        oauth_signature = hmac_sha1(key, signature_base_string).toBase64
-
-        doAssert percentEncode(oauth_signature) == "MdpQcU8iPSUjWoN%2FUDMsK2sui9I%3D"
+when not defined(ssl):
+    echo "SSL support is required."
+    quit 1
