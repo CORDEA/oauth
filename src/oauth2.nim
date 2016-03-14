@@ -17,7 +17,7 @@
 import uri, base64
 import math, times
 import asynchttpserver, asyncdispatch, asyncnet
-import httpclient
+import httpclient, cgi
 import subexes, strtabs, strutils
 import oauthutils
 
@@ -45,11 +45,11 @@ proc getGrantUrl(url, clientId: string, grantType: GrantType,
     var url = url
     let parsed = parseUri(url)
     url = url & (if parsed.query == "": "?" else: "&")
-    url = url & subex("response_type=$#&client_id=$#&state=$#") % [ (if grantType == AuthorizationCode: "code" else: "token"), percentEncode(clientId), state ]
+    url = url & subex("response_type=$#&client_id=$#&state=$#") % [ (if grantType == AuthorizationCode: "code" else: "token"), encodeUrl(clientId), state ]
     if redirectUri != nil:
-        url = url & subex("&redirect_uri=$#") % [ percentEncode(redirectUri) ]
+        url = url & subex("&redirect_uri=$#") % [ encodeUrl(redirectUri) ]
     if len(scope) != 0:
-        url = url & subex("&scope=$#") % [ percentEncode(scope.join(" ")) ]
+        url = url & subex("&scope=$#") % [ encodeUrl(scope.join(" ")) ]
     result = url
 
 proc getAuthorizationCodeGrantUrl*(url, clientId: string,
@@ -71,14 +71,14 @@ proc accessTokenRequest(url, clientId, clientSecret: string, grantType: GrantTyp
     if grantType == ResourceOwnerPassCreds:
         body = subex("&username=$#&password=$#") % [ username, password ]
         if len(scope) != 0:
-            body = body & subex("&scope=$#") % [ percentEncode(scope.join(" ")) ]
+            body = body & subex("&scope=$#") % [ encodeUrl(scope.join(" ")) ]
     elif grantType == AuthorizationCode:
-        body = body & subex("&code=$#") % [ percentEncode(code) ]
+        body = body & subex("&code=$#") % [ encodeUrl(code) ]
         if redirectUri != nil:
-            body = body & subex("&redirect_uri=$#") % [ percentEncode(redirectUri) ]
+            body = body & subex("&redirect_uri=$#") % [ encodeUrl(redirectUri) ]
     elif grantType == ClientCreds:
         if len(scope) != 0:
-            body = body & subex("&scope=$#") % [ percentEncode(scope.join(" ")) ]
+            body = body & subex("&scope=$#") % [ encodeUrl(scope.join(" ")) ]
 
     let extraHeaders = basicAuthorizationHeader(clientId, clientSecret)
     let header = createRequestHeader(extraheaders, body)
