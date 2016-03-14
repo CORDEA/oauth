@@ -69,7 +69,7 @@ proc accessTokenRequest(url, clientId, clientSecret: string, grantType: GrantTyp
     code, redirectUri, username, password: string = nil, scope: openarray[string] = []): Response =
     var body = "grant_type=" & $grantType
     if grantType == ResourceOwnerPassCreds:
-        body = subex("&username=$#&password=$#") % [ username, password ]
+        body = body & subex("&username=$#&password=$#") % [ username, password ]
         if len(scope) != 0:
             body = body & subex("&scope=$#") % [ percentEncode(scope.join(" ")) ]
     elif grantType == AuthorizationCode:
