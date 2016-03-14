@@ -67,5 +67,5 @@ proc parseResponseBody*(body: string): StringTableRef =
     let responses = body.split("&")
     result = newStringTable(modeCaseInsensitive)
     for response in responses:
-        let r = response.split("=")
-        result[r[0]] = r[1]
+        let fd = response.find("=")
+        result[response[0..fd-1]] = response[fd+1..len(response)]
