@@ -1,4 +1,6 @@
 # oauth
+[![Build Status](https://travis-ci.org/CORDEA/oauth.svg?branch=master)](https://travis-ci.org/CORDEA/oauth)
+
 OAuth library for nim
 
 OAuth is composed of two modules.
