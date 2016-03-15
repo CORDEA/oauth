@@ -59,10 +59,23 @@ proc getImplicitGrantUrl*(url, clientId: string,
     redirectUri, state: string = nil, scope: openarray[string] = []): string =
     result = getGrantUrl(url, clientId, Implicit, redirectUri, state, scope)
 
-proc basicAuthorizationHeader(clientId, clientSecret: string): string =
-    result = encode(clientId & ":" & clientSecret)
-    result = result.replace("\c\L", "")
-    result = "Authorization: Basic " & result & "\c\L"
+proc getBasicAuthorizationHeader*(clientId, clientSecret: string): string =
+    var auth = encode(clientId & ":" & clientSecret)
+    auth = auth.replace("\c\L", "")
+    result = "Authorization: Basic " & auth & "\c\L"
+
+proc getBasicAuthorizationHeader(clientId, clientSecret, body: string): string =
+    let header = getBasicAuthorizationHeader(clientId, clientSecret)
+    result = createRequestHeader(header, body)
+
+proc getBearerRequestHeader*(accessToken: string): string =
+    result = "Authorization: Bearer " & accessToken  & "\c\L"
+
+proc getBearerRequestHeader(accessToken, extraHeaders, body: string): string =
+    let
+        bearerHeader = getBearerRequestHeader(accessToken)
+        header = concatHeader(bearerHeader, extraHeaders)
+    result = createRequestHeader(header, body)
 
 proc accessTokenRequest(url, clientId, clientSecret: string, grantType: GrantType,
     code, redirectUri, username, password: string = nil, scope: openarray[string] = []): Response =
@@ -79,8 +92,7 @@ proc accessTokenRequest(url, clientId, clientSecret: string, grantType: GrantTyp
         if len(scope) != 0:
             body = body & subex("&scope=$#") % [ encodeUrl(scope.join(" ")) ]
 
-    let extraHeaders = basicAuthorizationHeader(clientId, clientSecret)
-    let header = createRequestHeader(extraheaders, body)
+    let header = getBasicAuthorizationHeader(clientId, clientSecret, body)
     result = request(url, httpMethod = httpPOST,
         extraHeaders = header, body = body)
 
@@ -174,18 +186,14 @@ proc resourceOwnerPassCredsGrant*(url, clientId, clientSecret, username, passwor
     
 proc clientCredsGrant*(url, clientid, clientsecret: string, scope: openarray[string] = []): Response = 
     result = accessTokenRequest(url, clientId, clientSecret, ClientCreds, scope = scope)
-    
+
 proc bearerRequest*(url, accessToken: string, httpMethod = httpGET, extraHeaders = "", body = ""): Response =
-    let
-        extraHeaders = "Authorization: Bearer " & accessToken  & "\c\L" & extraHeaders
-        header = createRequestHeader(extraHeaders, body)
+    let header = getBearerRequestHeader(accessToken, extraHeaders, body)
     result = request(url, httpMethod = httpMethod, extraHeaders = header, body = body)
 
 when defined(testing):
-    let header = basicAuthorizationHeader("Aladdin", "open sesame")
-    assert header == "Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==\c\L"
-
-    # Parse response body test
+    
+    # parseResponseBody test
     var
         original = "oauth_token=hh5s93j4hdidpola&oauth_token_secret=hdhd0244k9j7ao03&oauth_callback_confirmed=true"
         src = parseResponseBody(original)
@@ -206,13 +214,16 @@ when defined(testing):
     assert src["oauth_token_secret"] == "Kd75W4OQfb2oJTV0vzGzeXftVAwgMnEK9MumzYcM"
     assert src["oauth_callback_confirmed"] == "true"
 
+    # createState test
     assert len(createState()) == 5
 
+    # concatHeader test
     assert concatHeader("test1\c\L", "test2\c\L") == "test1\c\Ltest2\c\L"
     assert concatHeader("test1", "test2\c\L") == "test1\c\Ltest2\c\L"
     assert concatHeader("test1\c\L", "test2") == "test1\c\Ltest2\c\L"
     assert concatHeader("test1", "test2") == "test1\c\Ltest2\c\L"
 
+    # createRequestHeader test
     assert createRequestHeader("", "aaaaa") == "Content-Type: application/x-www-form-urlencoded\c\LContent-Length: 5\c\L"
     assert createRequestHeader("", "") == "Content-Type: application/x-www-form-urlencoded\c\LContent-Length: 0\c\L"
     assert createRequestHeader("test2", "aaaaa") == "Content-Type: application/x-www-form-urlencoded\c\LContent-Length: 5\c\Ltest2\c\L"

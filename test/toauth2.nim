@@ -32,3 +32,11 @@ suite "OAuth2 test":
     test "implicit grant url":
         let correct = "http://server.example.com/authorize?response_type=token&client_id=s6BhdRkqt3&state=xyz&redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb"
         check(getImplicitGrantUrl(url, clientId, redirectUri, state) == correct)
+
+    test "get basic authorization header":
+        let header = getBasicAuthorizationHeader("Aladdin", "open sesame")
+        assert header == "Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==\c\L"
+
+    test "get bearer request header":
+        let header = getBearerRequestHeader("Aladdin")
+        assert header == "Authorization: Bearer Aladdin\c\L"
