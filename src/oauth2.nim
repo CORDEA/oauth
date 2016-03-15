@@ -128,7 +128,7 @@ proc createState(): string =
     var r = 0
     result = ""
     randomize()
-    for i in 0..5:
+    for i in 0..4:
         r = random(26)
         result = result & chr(97 + r)
 
@@ -205,6 +205,17 @@ when defined(testing):
     assert src["oauth_token"] == "Z6eEdO8MOmk394WozF5oKyuAv855l4Mlqo7hhlSLik"
     assert src["oauth_token_secret"] == "Kd75W4OQfb2oJTV0vzGzeXftVAwgMnEK9MumzYcM"
     assert src["oauth_callback_confirmed"] == "true"
+
+    assert len(createState()) == 5
+
+    assert concatHeader("test1\c\L", "test2\c\L") == "test1\c\Ltest2\c\L"
+    assert concatHeader("test1", "test2\c\L") == "test1\c\Ltest2\c\L"
+    assert concatHeader("test1\c\L", "test2") == "test1\c\Ltest2\c\L"
+    assert concatHeader("test1", "test2") == "test1\c\Ltest2\c\L"
+
+    assert createRequestHeader("", "aaaaa") == "Content-Type: application/x-www-form-urlencoded\c\LContent-Length: 5\c\L"
+    assert createRequestHeader("", "") == "Content-Type: application/x-www-form-urlencoded\c\LContent-Length: 0\c\L"
+    assert createRequestHeader("test2", "aaaaa") == "Content-Type: application/x-www-form-urlencoded\c\LContent-Length: 5\c\Ltest2\c\L"
 
 when not defined(ssl):
     echo "SSL support is required."
