@@ -23,8 +23,7 @@ import hmac, sha1, base64
 import httpclient, uri
 import subexes
 import algorithm
-import strtabs
-import oauthutils, sequtils
+import strtabs, sequtils
 
 const 
     signatureMethod = "HMAC-SHA1"
@@ -34,6 +33,50 @@ type
     OAuth1Parameters* = ref object
         realm*, consumerKey*, nonce*, signature*, signatureMethod*, timestamp*, token*, callback*, verifier*: string
         isIncludeVersionToHeader*: bool
+
+# ref. https://github.com/nim-lang/Nim/blob/master/lib/pure/cgi.nim#L34.
+proc percentEncode*(str: string): string =
+    ## Escape the character by using the percent encoding.
+    result = ""
+    for s in str:
+        case s
+        of 'a'..'z', 'A'..'Z', '0'..'9', '-', '.', '_', '~':
+            result = result & s
+        else:
+            result = result & '%' & toHex(ord s, 2)
+
+proc createNonce(): string =
+    ## Generate a nonce of 32byte.
+    let epoch = $epochTime()
+    var
+        rst = ""
+        r = 0
+
+    randomize()
+    for i in 0..(23 - len(epoch)):
+        r = random(26)
+        rst = rst & chr(97 + r)
+
+    result = encode(rst & epoch)
+
+proc httpMethod2String(httpMethod: HttpMethod): string = 
+    case httpMethod
+    of httpHEAD:
+        result = "HEAD"
+    of httpGET:
+        result = "GET"
+    of httpPOST:
+        result = "POST"
+    of httpPUT:
+        result = "PUT"
+    of httpDELETE:
+        result = "DELETE"
+    of httpTRACE:
+        result = "TRACE"
+    of httpOPTIONS:
+        result = "OPTIONS"
+    of httpCONNECT:
+        result = "CONNECT"
 
 proc toArray(params: OAuth1Parameters): seq[array[2, string]] =
     result = @[]
@@ -186,6 +229,20 @@ proc oAuth1Request*(url, consumerKey, consumerSecret, token, tokenSecret: string
     result = oAuth1Request(url, consumerKey, consumerSecret,
         nil, token, nil, tokenSecret,
         isIncludeVersionToHeader, httpMethod, extraHeaders, body, nonce, realm)
+
+when defined(testing):
+    # Create nonce
+    assert len(createNonce()) == 32
+
+    # HttpMethod to string test
+    assert httpMethod2String(httpHEAD) == "HEAD"
+    assert httpMethod2String(httpGET) == "GET"
+    assert httpMethod2String(httpPOST) == "POST"
+    assert httpMethod2String(httpPUT) == "PUT"
+    assert httpMethod2String(httpDELETE) == "DELETE"
+    assert httpMethod2String(httpTRACE) == "TRACE"
+    assert httpMethod2String(httpOPTIONS) == "OPTIONS"
+    assert httpMethod2String(httpCONNECT) == "CONNECT"
 
 when not defined(ssl):
     echo "SSL support is required."
