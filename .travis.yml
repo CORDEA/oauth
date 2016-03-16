@@ -1,0 +1,21 @@
+sudo: false
+language: c
+os:
+    - linux
+env:
+    - PATH=$PWD/Nim/bin:$PATH
+install:
+    - git clone https://github.com/nim-lang/Nim.git
+    - cd Nim
+    - sh bootstrap.sh
+    - nim e install_nimble.nims
+    - nimble install -y hmac sha1
+    - cd ..
+before_script:
+    - set -e
+    - set -x
+script:
+    - cd test
+    - nim c -d:ssl -d:testing -r toauth1.nim
+    - nim c -d:ssl -d:testing -r toauth2.nim
+    - cd ..
