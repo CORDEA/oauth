@@ -174,6 +174,7 @@ proc authorizationCodeGrant*(authorizeUrl, accessTokenRequestUrl, clientId, clie
     let
         uri = waitFor getCallbackParamters(Port(port), html)
         params = parseResponseBody(uri.query)
+    assert params["state"] == state
     result = getAuthorizationCodeAccessToken(accessTokenRequestUrl, params["code"], clientId, clientSecret, redirectUri)
 
 proc implicitGrant*(url, clientId: string, html: string = nil,
@@ -188,8 +189,12 @@ proc implicitGrant*(url, clientId: string, html: string = nil,
         url = getImplicitGrantUrl(url, clientId, redirectUri, state, scope)
 
     echo url
-    let uri = waitFor getCallbackParamters(Port(port), html)
-    result = uri.query
+    let
+        uri = waitFor getCallbackParamters(Port(port), html)
+        query = uri.query
+        params = parseResponseBody(query)
+    assert params["state"] == state
+    result = query
 
 proc resourceOwnerPassCredsGrant*(url, clientId, clientSecret, username, password: string, scope: openarray[string] = []): Response = 
     ## Send a request for "Resource Owner Password Credentials Grant" type.
