@@ -14,6 +14,9 @@
 # Author: Yoshihiro Tanaka <contact@cordea.jp>
 # date  :2016-03-03
 
+## This module supports access to resources by OAuth 2.0.
+## | Please refer to `OAuth Core 2.0<http://oauth.net/2/>`_ details.
+
 import uri, base64
 import math, times
 import asynchttpserver, asyncdispatch, asyncnet
@@ -53,13 +56,16 @@ proc getGrantUrl(url, clientId: string, grantType: GrantType,
 
 proc getAuthorizationCodeGrantUrl*(url, clientId: string,
     redirectUri, state: string = nil, scope: openarray[string] = []): string =
+    ## Returns the URL for sending authorization requests in "Authorization Code Grant" type.
     result = getGrantUrl(url, clientId, AuthorizationCode, redirectUri, state, scope)
 
 proc getImplicitGrantUrl*(url, clientId: string,
     redirectUri, state: string = nil, scope: openarray[string] = []): string =
+    ## Returns the URL for sending authorization requests in "Implicit Grant" type.
     result = getGrantUrl(url, clientId, Implicit, redirectUri, state, scope)
 
 proc getBasicAuthorizationHeader*(clientId, clientSecret: string): string =
+    ## Returns a header necessary to basic authentication.
     var auth = encode(clientId & ":" & clientSecret)
     auth = auth.replace("\c\L", "")
     result = "Authorization: Basic " & auth & "\c\L"
@@ -69,6 +75,7 @@ proc getBasicAuthorizationHeader(clientId, clientSecret, body: string): string =
     result = createRequestHeader(header, body)
 
 proc getBearerRequestHeader*(accessToken: string): string =
+    ## Returns a header necessary to bearer request.
     result = "Authorization: Bearer " & accessToken  & "\c\L"
 
 proc getBearerRequestHeader(accessToken, extraHeaders, body: string): string =
@@ -97,6 +104,7 @@ proc accessTokenRequest(url, clientId, clientSecret: string, grantType: GrantTyp
         extraHeaders = header, body = body)
 
 proc getAuthorizationCodeAccessToken*(url, code, clientId, clientSecret: string, redirectUri: string = nil): Response =
+    ## Send the access token request for "Authorization Code Grant" type.
     result = accessTokenRequest(url, clientId, clientSecret, AuthorizationCode, code, redirectUri)
 
 # ref. https://github.com/nim-lang/Nim/blob/master/lib/pure/asynchttpserver.nim#L154
@@ -153,6 +161,7 @@ proc parseResponseBody(body: string): StringTableRef =
 
 proc authorizationCodeGrant*(authorizeUrl, accessTokenRequestUrl, clientId, clientSecret: string,
     html: string = nil, scope: openarray[string] = [], port: int = 8080): Response =
+    ## Send a request for "Authorization Code Grant" type.
     var html = html
     if html == nil:
         html = ""
@@ -169,6 +178,7 @@ proc authorizationCodeGrant*(authorizeUrl, accessTokenRequestUrl, clientId, clie
 
 proc implicitGrant*(url, clientId: string, html: string = nil,
     scope: openarray[string] = [], port: int = 8080): string =
+    ## Send a request for "Implicit Grant" type.
     var html = html
     if html == nil:
         html = ""
@@ -182,9 +192,14 @@ proc implicitGrant*(url, clientId: string, html: string = nil,
     result = uri.query
 
 proc resourceOwnerPassCredsGrant*(url, clientId, clientSecret, username, password: string, scope: openarray[string] = []): Response = 
+    ## Send a request for "Resource Owner Password Credentials Grant" type.
+    ##
+    ##  | The client MUST discard the credentials once an access token has been obtained.
+    ##  | -- https://tools.ietf.org/html/rfc6749#section-4.3
     result = accessTokenRequest(url, clientId, clientSecret, ResourceOwnerPassCreds, username = username, password = password, scope = scope)
     
 proc clientCredsGrant*(url, clientid, clientsecret: string, scope: openarray[string] = []): Response = 
+    ## Send a request for "Client Credentials Grant" type.
     result = accessTokenRequest(url, clientId, clientSecret, ClientCreds, scope = scope)
 
 proc bearerRequest*(url, accessToken: string, httpMethod = httpGET, extraHeaders = "", body = ""): Response =
@@ -192,7 +207,6 @@ proc bearerRequest*(url, accessToken: string, httpMethod = httpGET, extraHeaders
     result = request(url, httpMethod = httpMethod, extraHeaders = header, body = body)
 
 when defined(testing):
-    
     # parseResponseBody test
     var
         original = "oauth_token=hh5s93j4hdidpola&oauth_token_secret=hdhd0244k9j7ao03&oauth_callback_confirmed=true"
