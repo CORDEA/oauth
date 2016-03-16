@@ -169,6 +169,10 @@ proc parseResponseBody(body: string): StringTableRef =
 proc authorizationCodeGrant*(authorizeUrl, accessTokenRequestUrl, clientId, clientSecret: string,
     html: string = nil, scope: openarray[string] = [], port: int = 8080): Response =
     ## Send a request for "Authorization Code Grant" type.
+    ## | This method, outputs a URL for the authorization request at first.
+    ## | Then, wait for the callback at "http://localhost:${port}".
+    ## | When receiving the callback, check the state, and request an access token to the server.
+    ## | Returns the request result of the access token.
     var html = html
     if html == nil:
         html = ""
@@ -187,6 +191,9 @@ proc authorizationCodeGrant*(authorizeUrl, accessTokenRequestUrl, clientId, clie
 proc implicitGrant*(url, clientId: string, html: string = nil,
     scope: openarray[string] = [], port: int = 8080): string =
     ## Send a request for "Implicit Grant" type.
+    ## | This method, outputs a URL for the authorization request at first.
+    ## | Then, wait for the callback at "http://localhost:${port}".
+    ## | When receiving the callback, check the state, returns the Uri.query as a result.
     var html = html
     if html == nil:
         html = ""
@@ -219,6 +226,7 @@ proc refreshToken*(url, clientId, clientSecret, refreshToken: string, scope: ope
     result = accessTokenRequest(url, clientId, clientSecret, RefreshToken, refreshToken = refreshToken, scope = scope)
 
 proc bearerRequest*(url, accessToken: string, httpMethod = httpGET, extraHeaders = "", body = ""): Response =
+    ## Send a request using the bearer token.
     let header = getBearerRequestHeader(accessToken, extraHeaders, body)
     result = request(url, httpMethod = httpMethod, extraHeaders = header, body = body)
 
