@@ -28,7 +28,8 @@ type
         AuthorizationCode = "authorization_code",
         Implicit,
         ResourceOwnerPassCreds = "password",
-        ClientCreds = "client_credentials"
+        ClientCreds = "client_credentials",
+        RefreshToken = "refresh_token"
 
 proc concatHeader(h0, h1: string): string =
     result = ""
@@ -85,19 +86,25 @@ proc getBearerRequestHeader(accessToken, extraHeaders, body: string): string =
     result = createRequestHeader(header, body)
 
 proc accessTokenRequest(url, clientId, clientSecret: string, grantType: GrantType,
-    code, redirectUri, username, password: string = nil, scope: openarray[string] = []): Response =
+    code, redirectUri, username, password, refreshToken: string = nil, scope: openarray[string] = []): Response =
     var body = "grant_type=" & $grantType
-    if grantType == ResourceOwnerPassCreds:
+    case grantType
+    of ResourceOwnerPassCreds:
         body = body & subex("&username=$#&password=$#") % [ username, password ]
         if len(scope) != 0:
             body = body & subex("&scope=$#") % [ encodeUrl(scope.join(" ")) ]
-    elif grantType == AuthorizationCode:
+    of AuthorizationCode:
         body = body & subex("&code=$#") % [ encodeUrl(code) ]
         if redirectUri != nil:
             body = body & subex("&redirect_uri=$#") % [ encodeUrl(redirectUri) ]
-    elif grantType == ClientCreds:
+    of ClientCreds:
         if len(scope) != 0:
             body = body & subex("&scope=$#") % [ encodeUrl(scope.join(" ")) ]
+    of RefreshToken:
+        body = body & subex("&refresh_token=$#") % [ encodeUrl(refreshToken) ]
+        if len(scope) != 0:
+            body = body & subex("&scope=$#") % [ encodeUrl(scope.join(" ")) ]
+    else: discard
 
     let header = getBasicAuthorizationHeader(clientId, clientSecret, body)
     result = request(url, httpMethod = httpPOST,
@@ -206,6 +213,10 @@ proc resourceOwnerPassCredsGrant*(url, clientId, clientSecret, username, passwor
 proc clientCredsGrant*(url, clientid, clientsecret: string, scope: openarray[string] = []): Response = 
     ## Send a request for "Client Credentials Grant" type.
     result = accessTokenRequest(url, clientId, clientSecret, ClientCreds, scope = scope)
+
+proc refreshToken*(url, clientId, clientSecret, refreshToken: string, scope: openarray[string] = []): Response =
+    ## Send an update request of the access token.
+    result = accessTokenRequest(url, clientId, clientSecret, RefreshToken, refreshToken = refreshToken, scope = scope)
 
 proc bearerRequest*(url, accessToken: string, httpMethod = httpGET, extraHeaders = "", body = ""): Response =
     let header = getBearerRequestHeader(accessToken, extraHeaders, body)
