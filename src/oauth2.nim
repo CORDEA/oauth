@@ -235,7 +235,7 @@ proc refreshToken*(url, clientId, clientSecret, refreshToken: string,
     scope: openarray[string] = [], useBasicAuth: bool = true): Response =
     ## Send an update request of the access token.
     result = accessTokenRequest(url, clientId, clientSecret, RefreshToken, useBasicAuth, refreshToken = refreshToken, scope = scope)
-
+    
 proc bearerRequest*(url, accessToken: string, httpMethod = httpGET, extraHeaders = "", body = ""): Response =
     ## Send a request using the bearer token.
     let header = getBearerRequestHeader(accessToken, extraHeaders, body)
