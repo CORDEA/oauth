@@ -85,7 +85,7 @@ proc getBearerRequestHeader(accessToken, extraHeaders, body: string): string =
         header = concatHeader(bearerHeader, extraHeaders)
     result = createRequestHeader(header, body)
 
-proc accessTokenRequest(url, clientId, clientSecret: string, grantType: GrantType,
+proc accessTokenRequest(url, clientId, clientSecret: string, grantType: GrantType, useBasicAuth: bool,
     code, redirectUri, username, password, refreshToken: string = nil, scope: openarray[string] = []): Response =
     var body = "grant_type=" & $grantType
     case grantType
@@ -106,13 +106,20 @@ proc accessTokenRequest(url, clientId, clientSecret: string, grantType: GrantTyp
             body = body & subex("&scope=$#") % [ encodeUrl(scope.join(" ")) ]
     else: discard
 
-    let header = getBasicAuthorizationHeader(clientId, clientSecret, body)
+    var header: string
+    if useBasicAuth:
+        header = getBasicAuthorizationHeader(clientId, clientSecret, body)
+    else:
+        header = createRequestHeader("", body)
+        body = body & "&client_id=$#&client_secret=$#" % [ encodeUrl(clientId), encodeUrl(clientSecret) ]
+
     result = request(url, httpMethod = httpPOST,
         extraHeaders = header, body = body)
 
-proc getAuthorizationCodeAccessToken*(url, code, clientId, clientSecret: string, redirectUri: string = nil): Response =
+proc getAuthorizationCodeAccessToken*(url, code, clientId, clientSecret: string,
+    redirectUri: string = nil, useBasicAuth: bool = true): Response =
     ## Send the access token request for "Authorization Code Grant" type.
-    result = accessTokenRequest(url, clientId, clientSecret, AuthorizationCode, code, redirectUri)
+    result = accessTokenRequest(url, clientId, clientSecret, AuthorizationCode, useBasicAuth, code, redirectUri)
 
 # ref. https://github.com/nim-lang/Nim/blob/master/lib/pure/asynchttpserver.nim#L154
 proc getCallbackParamters(port: Port, html: string): Future[Uri] {.async.} =
@@ -210,20 +217,24 @@ proc implicitGrant*(url, clientId: string, html: string = nil,
     assert params["state"] == state
     result = query
 
-proc resourceOwnerPassCredsGrant*(url, clientId, clientSecret, username, password: string, scope: openarray[string] = []): Response = 
+proc resourceOwnerPassCredsGrant*(url, clientId, clientSecret, username, password: string,
+    scope: openarray[string] = [], useBasicAuth: bool = true): Response = 
     ## Send a request for "Resource Owner Password Credentials Grant" type.
     ##
     ##  | The client MUST discard the credentials once an access token has been obtained.
     ##  | -- https://tools.ietf.org/html/rfc6749#section-4.3
-    result = accessTokenRequest(url, clientId, clientSecret, ResourceOwnerPassCreds, username = username, password = password, scope = scope)
+    result = accessTokenRequest(url, clientId, clientSecret, ResourceOwnerPassCreds, useBasicAuth,
+        username = username, password = password, scope = scope)
     
-proc clientCredsGrant*(url, clientid, clientsecret: string, scope: openarray[string] = []): Response = 
+proc clientCredsGrant*(url, clientid, clientsecret: string,
+    scope: openarray[string] = [], useBasicAuth: bool = true): Response = 
     ## Send a request for "Client Credentials Grant" type.
-    result = accessTokenRequest(url, clientId, clientSecret, ClientCreds, scope = scope)
+    result = accessTokenRequest(url, clientId, clientSecret, ClientCreds, useBasicAuth, scope = scope)
 
-proc refreshToken*(url, clientId, clientSecret, refreshToken: string, scope: openarray[string] = []): Response =
+proc refreshToken*(url, clientId, clientSecret, refreshToken: string,
+    scope: openarray[string] = [], useBasicAuth: bool = true): Response =
     ## Send an update request of the access token.
-    result = accessTokenRequest(url, clientId, clientSecret, RefreshToken, refreshToken = refreshToken, scope = scope)
+    result = accessTokenRequest(url, clientId, clientSecret, RefreshToken, useBasicAuth, refreshToken = refreshToken, scope = scope)
 
 proc bearerRequest*(url, accessToken: string, httpMethod = httpGET, extraHeaders = "", body = ""): Response =
     ## Send a request using the bearer token.
