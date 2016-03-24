@@ -110,8 +110,8 @@ proc accessTokenRequest(url, clientId, clientSecret: string, grantType: GrantTyp
     if useBasicAuth:
         header = getBasicAuthorizationHeader(clientId, clientSecret, body)
     else:
-        header = createRequestHeader("", body)
         body = body & "&client_id=$#&client_secret=$#" % [ encodeUrl(clientId), encodeUrl(clientSecret) ]
+        header = createRequestHeader("", body)
 
     result = request(url, httpMethod = httpPOST,
         extraHeaders = header, body = body)
