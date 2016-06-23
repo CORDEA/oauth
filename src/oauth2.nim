@@ -18,7 +18,7 @@
 ## | Please refer to `OAuth Core 2.0<http://oauth.net/2/>`_ details.
 
 import uri, base64
-import math, times
+import random, math, times
 import asynchttpserver, asyncdispatch, asyncnet
 import httpclient, cgi
 import subexes, strtabs, strutils
