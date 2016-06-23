@@ -129,7 +129,7 @@ proc getCallbackParamters(port: Port, html: string): Future[Uri] {.async.} =
 
     proc processClient(client: AsyncSocket): Future[string] {.async.} =
         var request = Request()
-        request.headers = newStringTable()
+        request.headers = newHttpHeaders()
         result = nil
         while not client.isClosed:
             assert client != nil
