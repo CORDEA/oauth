@@ -16,7 +16,7 @@
 
 import unittest
 import ../src/oauth1
-import hmac, sha1
+import hmac, base64
 import httpclient
 import strtabs
 
@@ -83,7 +83,7 @@ suite "OAuth1 test":
             let
                 signatureBaseString = getSignatureBaseString(httpPOST, url1, body1, table1)
                 signatureKey = getSignatureKey(consumerSecret1, tokenSecret1)
-                oauthSignature = hmac_sha1(signatureKey, signatureBaseString).toBase64
+                oauthSignature = hmac_sha1(signatureKey, signatureBaseString).encode
 
             check(oauth_signature == "tnnArxj06cWHq44gCs1OSKk/jLY=")
 
@@ -92,6 +92,6 @@ suite "OAuth1 test":
         let
             signatureBaseString = getSignatureBaseString(httpGET, url2, "", table2)
             signatureKey = getSignatureKey(consumerSecret2, tokenSecret2)
-            oauthSignature = hmac_sha1(signatureKey, signatureBaseString).toBase64
+            oauthSignature = hmac_sha1(signatureKey, signatureBaseString).encode
 
         check(percentEncode(oauthSignature) == "MdpQcU8iPSUjWoN%2FUDMsK2sui9I%3D")

@@ -19,7 +19,7 @@
 ## | Please refer to `OAuth Core 1.0a<http://oauth.net/core/1.0a>`_ details.
 
 import times, math, strutils
-import hmac, sha1, base64
+import hmac, base64
 import httpclient, uri
 import subexes
 import algorithm
@@ -186,7 +186,7 @@ proc oAuth1Request(url, consumerKey, consumerSecret: string,
         )
         signatureBaseString = getSignatureBaseString(httpMethod, url, body, params)
         signature = hmac_sha1(getSignatureKey(consumerSecret, tokenSecret),
-                                    signatureBaseString).toBase64
+                                    signatureBaseString).encode
 
     params.signature = percentEncode(signature)
     let header = getOAuth1RequestHeader(params, extraHeaders)
