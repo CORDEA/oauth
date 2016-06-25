@@ -150,7 +150,7 @@ iterator parseQuery(queries: string): array[2, string] =
             let fd = r.find("=")
             yield [r[0..fd-1], r[fd+1..len(r)]]
 
-proc getSignatureBaseString*(httpMethod: HttpMethod, url, body: string, params: OAuth1Parameters): string =
+proc getSignatureBaseString(httpMethod: HttpMethod, url, body: string, params: OAuth1Parameters): string =
     ## Generate a signature base string.
     var url = url
     var requests: seq[array[2, string]] = params.toArray()
@@ -171,7 +171,7 @@ proc getSignatureBaseString*(httpMethod: HttpMethod, url, body: string, params: 
     let param = parameterNormarization(requests)
     result = httpMethod2String(httpMethod) & "&" & percentEncode(url) & "&" & percentEncode(param)
 
-proc getSignatureKey*(consumerKey: string, token: string): string = 
+proc getSignatureKey(consumerKey: string, token: string): string = 
     ## Generate a signature key.
     result = percentEncode(consumerKey) & "&" & percentEncode(token)
 
