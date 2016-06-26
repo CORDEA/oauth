@@ -19,7 +19,7 @@
 ## | Please refer to `OAuth Core 1.0a<http://oauth.net/core/1.0a>`_ details.
 
 import times, math, random, strutils
-import hmac, sha1, base64
+import sha1, base64
 import httpclient, uri
 import subexes
 import algorithm
@@ -44,6 +44,42 @@ proc percentEncode*(str: string): string =
             result = result & s
         else:
             result = result & '%' & toHex(ord s, 2)
+
+# ref.
+# https://www.ietf.org/rfc/rfc2104.txt
+# https://github.com/OpenSystemsLab/hmac.nim/blob/master/hmac.nim#L41-L63
+proc hmacSha1(key, text: string): string =
+    const
+        blockLength  = 64
+        ipadByte: uint8 = 0x36
+        opadByte: uint8 = 0x5C
+        zeroByte: uint8 = 0x00
+
+    var
+        byte: seq[uint8]  = @[]
+        ipad: string = ""
+        opad: string = ""
+
+    if len(key) > blockLength:
+        for b in compute(key):
+            byte.add ord(b)
+    else:
+        for k in key:
+            byte.add ord(k)
+    
+    for _ in 0..(blockLength - len(byte) - 1):
+        byte.add zeroByte
+
+    assert len(byte) == blockLength
+
+    for i in 0..len(byte) - 1:
+        ipad = ipad & char(byte[i] xor ipadByte)
+        opad = opad & char(byte[i] xor opadByte)
+
+    for b in compute(ipad & text):
+        opad = opad & char(b)
+
+    result = compute(opad).toBase64
 
 proc createNonce(): string =
     ## Generate a nonce of 32byte.
@@ -114,7 +150,7 @@ iterator parseQuery(queries: string): array[2, string] =
             let fd = r.find("=")
             yield [r[0..fd-1], r[fd+1..len(r)]]
 
-proc getSignatureBaseString*(httpMethod: HttpMethod, url, body: string, params: OAuth1Parameters): string =
+proc getSignatureBaseString(httpMethod: HttpMethod, url, body: string, params: OAuth1Parameters): string =
     ## Generate a signature base string.
     var url = url
     var requests: seq[array[2, string]] = params.toArray()
@@ -135,9 +171,17 @@ proc getSignatureBaseString*(httpMethod: HttpMethod, url, body: string, params: 
     let param = parameterNormarization(requests)
     result = httpMethod2String(httpMethod) & "&" & percentEncode(url) & "&" & percentEncode(param)
 
-proc getSignatureKey*(consumerKey: string, token: string): string = 
+proc getSignatureKey(consumerKey: string, token: string): string = 
     ## Generate a signature key.
     result = percentEncode(consumerKey) & "&" & percentEncode(token)
+
+proc getSignature*(HttpMethod: HttpMethod, url, body: string, params: OAuth1Parameters, consumerKey, token: string): string =
+    ## Generate a signature.
+    let
+        signatureKey = getSignatureKey(consumerKey, token)
+        signatureBaseString = getSignatureBaseString(HttpMethod, url, body, params)
+
+    result = hmacSha1(signatureKey, signatureBaseString)
 
 proc getOAuth1RequestHeader*(params: OAuth1Parameters, extraHeaders: string): string =
     ## Generate the necessary header to a OAuth1 request.
@@ -184,9 +228,7 @@ proc oAuth1Request(url, consumerKey, consumerSecret: string,
             token: token,
             verifier: verifier
         )
-        signatureBaseString = getSignatureBaseString(httpMethod, url, body, params)
-        signature = hmac_sha1(getSignatureKey(consumerSecret, tokenSecret),
-                                    signatureBaseString).toBase64
+        signature = getSignature(httpMethod, url, body, params, consumerSecret, tokenSecret)
 
     params.signature = percentEncode(signature)
     let header = getOAuth1RequestHeader(params, extraHeaders)
