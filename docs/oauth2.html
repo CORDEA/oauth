@@ -10,8 +10,8 @@
 <link rel="shortcut icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAUAAAAF////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAIAAABbAAAAlQAAAKIAAACbAAAAmwAAAKIAAACVAAAAWwAAAAL///8A////AP///wD///8A////AAAAABQAAADAAAAAYwAAAA3///8A////AP///wD///8AAAAADQAAAGMAAADAAAAAFP///wD///8A////AP///wAAAACdAAAAOv///wD///8A////AP///wD///8A////AP///wD///8AAAAAOgAAAJ3///8A////AP///wAAAAAnAAAAcP///wAAAAAoAAAASv///wD///8A////AP///wAAAABKAAAAKP///wAAAABwAAAAJ////wD///8AAAAAgQAAABwAAACIAAAAkAAAAJMAAACtAAAAFQAAABUAAACtAAAAkwAAAJAAAACIAAAAHAAAAIH///8A////AAAAAKQAAACrAAAAaP///wD///8AAAAARQAAANIAAADSAAAARf///wD///8AAAAAaAAAAKsAAACk////AAAAADMAAACcAAAAnQAAABj///8A////AP///wAAAAAYAAAAGP///wD///8A////AAAAABgAAACdAAAAnAAAADMAAAB1AAAAwwAAAP8AAADpAAAAsQAAAE4AAAAb////AP///wAAAAAbAAAATgAAALEAAADpAAAA/wAAAMMAAAB1AAAAtwAAAOkAAAD/AAAA/wAAAP8AAADvAAAA3gAAAN4AAADeAAAA3gAAAO8AAAD/AAAA/wAAAP8AAADpAAAAtwAAAGUAAAA/AAAA3wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAADfAAAAPwAAAGX///8A////AAAAAEgAAADtAAAAvwAAAL0AAADGAAAA7wAAAO8AAADGAAAAvQAAAL8AAADtAAAASP///wD///8A////AP///wD///8AAAAAO////wD///8A////AAAAAIcAAACH////AP///wD///8AAAAAO////wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A//8AAP//AAD4HwAA7/cAAN/7AAD//wAAoYUAAJ55AACf+QAAh+EAAAAAAADAAwAA4AcAAP5/AAD//wAA//8AAA=="/>
 
 <!-- Google fonts -->
-<link href='http://fonts.googleapis.com/css?family=Raleway:400,600,900' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Raleway:400,600,900' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600' rel='stylesheet' type='text/css'/>
 
 <!-- CSS -->
 <title>Module oauth2</title>
@@ -1173,9 +1173,10 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
     title="getBasicAuthorizationHeader*(clientId, clientSecret: string): string"><wbr />get<wbr />Basic<wbr />Authorization<wbr />Header</a></li>
   <li><a class="reference" href="#getBearerRequestHeader,string"
     title="getBearerRequestHeader*(accessToken: string): string"><wbr />get<wbr />Bearer<wbr />Request<wbr />Header</a></li>
-  <li><a class="reference" href="#getAuthorizationCodeAccessToken,string,string,string,string,string"
+  <li><a class="reference" href="#getAuthorizationCodeAccessToken,string,string,string,string,string,bool"
     title="getAuthorizationCodeAccessToken*(url, code, clientId, clientSecret: string;
-                                 redirectUri: string = nil): Response"><wbr />get<wbr />Authorization<wbr />Code<wbr />Access<wbr />Token</a></li>
+                                 redirectUri: string = nil;
+                                 useBasicAuth: bool = true): Response"><wbr />get<wbr />Authorization<wbr />Code<wbr />Access<wbr />Token</a></li>
   <li><a class="reference" href="#authorizationCodeGrant,string,string,string,string,string,openarray[string],int"
     title="authorizationCodeGrant*(authorizeUrl, accessTokenRequestUrl, clientId, clientSecret: string;
                         html: string = nil; scope: openarray[string] = [];
@@ -1183,14 +1184,16 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
   <li><a class="reference" href="#implicitGrant,string,string,string,openarray[string],int"
     title="implicitGrant*(url, clientId: string; html: string = nil;
                scope: openarray[string] = []; port: int = 8080): string"><wbr />implicit<wbr />Grant</a></li>
-  <li><a class="reference" href="#resourceOwnerPassCredsGrant,string,string,string,string,string,openarray[string]"
+  <li><a class="reference" href="#resourceOwnerPassCredsGrant,string,string,string,string,string,openarray[string],bool"
     title="resourceOwnerPassCredsGrant*(url, clientId, clientSecret, username, password: string;
-                             scope: openarray[string] = []): Response"><wbr />resource<wbr />Owner<wbr />Pass<wbr />Creds<wbr />Grant</a></li>
-  <li><a class="reference" href="#clientCredsGrant,string,string,string,openarray[string]"
-    title="clientCredsGrant*(url, clientid, clientsecret: string; scope: openarray[string] = []): Response"><wbr />client<wbr />Creds<wbr />Grant</a></li>
-  <li><a class="reference" href="#refreshToken,string,string,string,string,openarray[string]"
+                             scope: openarray[string] = [];
+                             useBasicAuth: bool = true): Response"><wbr />resource<wbr />Owner<wbr />Pass<wbr />Creds<wbr />Grant</a></li>
+  <li><a class="reference" href="#clientCredsGrant,string,string,string,openarray[string],bool"
+    title="clientCredsGrant*(url, clientid, clientsecret: string;
+                  scope: openarray[string] = []; useBasicAuth: bool = true): Response"><wbr />client<wbr />Creds<wbr />Grant</a></li>
+  <li><a class="reference" href="#refreshToken,string,string,string,string,openarray[string],bool"
     title="refreshToken*(url, clientId, clientSecret, refreshToken: string;
-              scope: openarray[string] = []): Response"><wbr />refresh<wbr />Token</a></li>
+              scope: openarray[string] = []; useBasicAuth: bool = true): Response"><wbr />refresh<wbr />Token</a></li>
   <li><a class="reference" href="#bearerRequest,string,string"
     title="bearerRequest*(url, accessToken: string; httpMethod = httpGET; extraHeaders = &quot;&quot;;
                body = &quot;&quot;): Response"><wbr />bearer<wbr />Request</a></li>
@@ -1234,8 +1237,9 @@ Returns a header necessary to basic authentication.
 Returns a header necessary to bearer request.
 
 </dd>
-<dt id="getAuthorizationCodeAccessToken"><a name="getAuthorizationCodeAccessToken,string,string,string,string,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getAuthorizationCodeAccessToken</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">code</span><span class="Other">,</span> <span class="Identifier">clientId</span><span class="Other">,</span> <span class="Identifier">clientSecret</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
-                                     <span class="Identifier">redirectUri</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Response</span></pre></dt>
+<dt id="getAuthorizationCodeAccessToken"><a name="getAuthorizationCodeAccessToken,string,string,string,string,string,bool"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getAuthorizationCodeAccessToken</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">code</span><span class="Other">,</span> <span class="Identifier">clientId</span><span class="Other">,</span> <span class="Identifier">clientSecret</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
+                                     <span class="Identifier">redirectUri</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span>
+                                     <span class="Identifier">useBasicAuth</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Response</span></pre></dt>
 <dd>
 Send the access token request for &quot;Authorization Code Grant&quot; type.
 
@@ -1253,21 +1257,22 @@ Send a request for &quot;Authorization Code Grant&quot; type.<p>This method, out
 Send a request for &quot;Implicit Grant&quot; type.<p>This method, outputs a URL for the authorization request at first.<br />Then, wait for the callback at &quot;<a class="reference external" href="http://localhost:${port}&quot;">http://localhost:${port}&quot;</a>.<br />When receiving the callback, check the state, returns the Uri.query as a result.<br /></p>
 
 </dd>
-<dt id="resourceOwnerPassCredsGrant"><a name="resourceOwnerPassCredsGrant,string,string,string,string,string,openarray[string]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">resourceOwnerPassCredsGrant</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">clientId</span><span class="Other">,</span> <span class="Identifier">clientSecret</span><span class="Other">,</span> <span class="Identifier">username</span><span class="Other">,</span> <span class="Identifier">password</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
-                                 <span class="Identifier">scope</span><span class="Other">:</span> <span class="Identifier">openarray</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Response</span></pre></dt>
+<dt id="resourceOwnerPassCredsGrant"><a name="resourceOwnerPassCredsGrant,string,string,string,string,string,openarray[string],bool"></a><pre><span class="Keyword">proc</span> <span class="Identifier">resourceOwnerPassCredsGrant</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">clientId</span><span class="Other">,</span> <span class="Identifier">clientSecret</span><span class="Other">,</span> <span class="Identifier">username</span><span class="Other">,</span> <span class="Identifier">password</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
+                                 <span class="Identifier">scope</span><span class="Other">:</span> <span class="Identifier">openarray</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">;</span>
+                                 <span class="Identifier">useBasicAuth</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Response</span></pre></dt>
 <dd>
 Send a request for &quot;Resource Owner Password Credentials Grant&quot; type.<blockquote><p><p>The client MUST discard the credentials once an access token has been obtained.<br />-- <a class="reference external" href="https://tools.ietf.org/html/rfc6749#section-4.3">https://tools.ietf.org/html/rfc6749#section-4.3</a><br /></p></p></blockquote>
 
 
 </dd>
-<dt id="clientCredsGrant"><a name="clientCredsGrant,string,string,string,openarray[string]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">clientCredsGrant</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">clientid</span><span class="Other">,</span> <span class="Identifier">clientsecret</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
-                      <span class="Identifier">scope</span><span class="Other">:</span> <span class="Identifier">openarray</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Response</span></pre></dt>
+<dt id="clientCredsGrant"><a name="clientCredsGrant,string,string,string,openarray[string],bool"></a><pre><span class="Keyword">proc</span> <span class="Identifier">clientCredsGrant</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">clientid</span><span class="Other">,</span> <span class="Identifier">clientsecret</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
+                      <span class="Identifier">scope</span><span class="Other">:</span> <span class="Identifier">openarray</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">useBasicAuth</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Response</span></pre></dt>
 <dd>
 Send a request for &quot;Client Credentials Grant&quot; type.
 
 </dd>
-<dt id="refreshToken"><a name="refreshToken,string,string,string,string,openarray[string]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">refreshToken</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">clientId</span><span class="Other">,</span> <span class="Identifier">clientSecret</span><span class="Other">,</span> <span class="Identifier">refreshToken</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
-                  <span class="Identifier">scope</span><span class="Other">:</span> <span class="Identifier">openarray</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Response</span></pre></dt>
+<dt id="refreshToken"><a name="refreshToken,string,string,string,string,openarray[string],bool"></a><pre><span class="Keyword">proc</span> <span class="Identifier">refreshToken</span><span class="Operator">*</span><span class="Other">(</span><span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">clientId</span><span class="Other">,</span> <span class="Identifier">clientSecret</span><span class="Other">,</span> <span class="Identifier">refreshToken</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
+                  <span class="Identifier">scope</span><span class="Other">:</span> <span class="Identifier">openarray</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">useBasicAuth</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Response</span></pre></dt>
 <dd>
 Send an update request of the access token.
 
@@ -1287,8 +1292,8 @@ Send a request using the bearer token.
     <div class="row">
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
-        <br>
-        <small>Made with Nim. Generated: 2016-03-17 08:45:36 UTC</small>
+        <br/>
+        <small>Made with Nim. Generated: 2016-06-26 11:38:00 UTC</small>
       </div>
     </div>
   </div>
