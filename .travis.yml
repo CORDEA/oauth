@@ -4,6 +4,9 @@ os:
     - linux
 env:
     - PATH=$PWD/Nim/bin:$PATH
+branches:
+    except:
+        - gh-pages
 install: .travis/install.sh
 before_script:
     - set -e
