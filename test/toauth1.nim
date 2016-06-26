@@ -1,4 +1,4 @@
-# Copyright [2016] [Yoshihiro Tanaka]
+# Copyright 2016 Yoshihiro Tanaka
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -16,7 +16,6 @@
 
 import unittest
 import ../src/oauth1
-import hmac, sha1
 import httpclient
 import strtabs
 
@@ -69,29 +68,13 @@ suite "OAuth1 test":
             let body = "Hello Ladies + Gentlemen, a signed OAuth request!"
             check(percentEncode(body) == "Hello%20Ladies%20%2B%20Gentlemen%2C%20a%20signed%20OAuth%20request%21")
 
-    # https://dev.twitter.com/oauth/overview/authorizing-requests
-    suite "twitter example":
-        test "Signature key":
-            let signatureBaseString = getSignatureBaseString(httpPOST, url1, body1, table1)
-            check(signatureBaseString == "POST&https%3A%2F%2Fapi.twitter.com%2F1%2Fstatuses%2Fupdate.json&include_entities%3Dtrue%26oauth_consumer_key%3Dxvz1evFS4wEEPTGEFPHBog%26oauth_nonce%3DkYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1318622958%26oauth_token%3D370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb%26oauth_version%3D1.0%26status%3DHello%2520Ladies%2520%252B%2520Gentlemen%252C%2520a%2520signed%2520OAuth%2520request%2521")
+    suite "Signature generate test":
+        # https://dev.twitter.com/oauth/overview/authorizing-requests
+        test "Twitter example":
+            let signature = getSignature(httpPOST, url1, body1, table1, consumerSecret1, tokenSecret1)
+            check(signature == "tnnArxj06cWHq44gCs1OSKk/jLY=")
 
-        test "Request header":
-            let signatureKey = getSignatureKey(consumerSecret1, tokenSecret1)
-            check(signatureKey == "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw&LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE")
-
-        test "Signature":
-            let
-                signatureBaseString = getSignatureBaseString(httpPOST, url1, body1, table1)
-                signatureKey = getSignatureKey(consumerSecret1, tokenSecret1)
-                oauthSignature = hmac_sha1(signatureKey, signatureBaseString).toBase64
-
-            check(oauth_signature == "tnnArxj06cWHq44gCs1OSKk/jLY=")
-
-    test "rfc5849 example":
-        # https://tools.ietf.org/html/rfc5849
-        let
-            signatureBaseString = getSignatureBaseString(httpGET, url2, "", table2)
-            signatureKey = getSignatureKey(consumerSecret2, tokenSecret2)
-            oauthSignature = hmac_sha1(signatureKey, signatureBaseString).toBase64
-
-        check(percentEncode(oauthSignature) == "MdpQcU8iPSUjWoN%2FUDMsK2sui9I%3D")
+        test "rfc5849 example":
+            # https://tools.ietf.org/html/rfc5849
+            let signature = getSignature(httpGET, url2, "", table2, consumerSecret2, tokenSecret2)
+            check(percentEncode(signature) == "MdpQcU8iPSUjWoN%2FUDMsK2sui9I%3D")

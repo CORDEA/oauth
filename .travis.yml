@@ -4,13 +4,10 @@ os:
     - linux
 env:
     - PATH=$PWD/Nim/bin:$PATH
-install:
-    - git clone https://github.com/nim-lang/Nim.git
-    - cd Nim
-    - sh bootstrap.sh
-    - nim e install_nimble.nims
-    - nimble install -y hmac sha1
-    - cd ..
+branches:
+    except:
+        - gh-pages
+install: .travis/install.sh
 before_script:
     - set -e
     - set -x
