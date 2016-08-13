@@ -18,7 +18,7 @@
 ## | Please refer to `OAuth Core 2.0<http://oauth.net/2/>`_ details.
 
 import uri, base64
-import math, times
+import math, times, random
 import asynchttpserver, asyncdispatch, asyncnet
 import httpclient, cgi
 import subexes, strtabs, strutils
@@ -44,7 +44,7 @@ proc createRequestHeader(extraHeaders: string, body: string): string =
     result = concatHeader(result, extraHeaders)
 
 proc getGrantUrl(url, clientId: string, grantType: GrantType,
-    redirectUri, state: string, scope: openarray[string] = []): string = 
+    redirectUri, state: string, scope: openarray[string] = []): string =
     var url = url
     let parsed = parseUri(url)
     url = url & (if parsed.query == "": "?" else: "&")
@@ -129,7 +129,7 @@ proc getCallbackParamters(port: Port, html: string): Future[Uri] {.async.} =
 
     proc processClient(client: AsyncSocket): Future[string] {.async.} =
         var request = Request()
-        request.headers = newStringTable()
+        request.headers = newHttpHeaders()
         result = nil
         while not client.isClosed:
             assert client != nil
@@ -218,16 +218,16 @@ proc implicitGrant*(url, clientId: string, html: string = nil,
     result = query
 
 proc resourceOwnerPassCredsGrant*(url, clientId, clientSecret, username, password: string,
-    scope: openarray[string] = [], useBasicAuth: bool = true): Response = 
+    scope: openarray[string] = [], useBasicAuth: bool = true): Response =
     ## Send a request for "Resource Owner Password Credentials Grant" type.
     ##
     ##  | The client MUST discard the credentials once an access token has been obtained.
     ##  | -- https://tools.ietf.org/html/rfc6749#section-4.3
     result = accessTokenRequest(url, clientId, clientSecret, ResourceOwnerPassCreds, useBasicAuth,
         username = username, password = password, scope = scope)
-    
+
 proc clientCredsGrant*(url, clientid, clientsecret: string,
-    scope: openarray[string] = [], useBasicAuth: bool = true): Response = 
+    scope: openarray[string] = [], useBasicAuth: bool = true): Response =
     ## Send a request for "Client Credentials Grant" type.
     result = accessTokenRequest(url, clientId, clientSecret, ClientCreds, useBasicAuth, scope = scope)
 
@@ -235,7 +235,7 @@ proc refreshToken*(url, clientId, clientSecret, refreshToken: string,
     scope: openarray[string] = [], useBasicAuth: bool = true): Response =
     ## Send an update request of the access token.
     result = accessTokenRequest(url, clientId, clientSecret, RefreshToken, useBasicAuth, refreshToken = refreshToken, scope = scope)
-    
+
 proc bearerRequest*(url, accessToken: string, httpMethod = httpGET, extraHeaders = "", body = ""): Response =
     ## Send a request using the bearer token.
     let header = getBearerRequestHeader(accessToken, extraHeaders, body)
