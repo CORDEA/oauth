@@ -1,6 +1,6 @@
 [Package]
 name        = "oauth"
-version     = "0.2"
+version     = "0.3"
 author      = "Yoshihiro Tanaka"
 description = "OAuth library for nim"
 license     = "Apache License 2.0"
