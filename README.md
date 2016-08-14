@@ -2,9 +2,7 @@
 
 | branch | nim version | status |
 |:-------|:--------|:------:|
-| master | v0.13.0 | [![Build Status](https://travis-ci.org/CORDEA/oauth.svg?branch=master)](https://travis-ci.org/CORDEA/oauth) |
-| develop | v0.14.3 (7f3b4ac) | [![Build Status](https://travis-ci.org/CORDEA/oauth.svg?branch=develop)](https://travis-ci.org/CORDEA/oauth) |
-
+| master | v0.14.3 (f44486c) | [![Build Status](https://travis-ci.org/CORDEA/oauth.svg?branch=master)](https://travis-ci.org/CORDEA/oauth) |
 
 ## OAuth library for nim
 
