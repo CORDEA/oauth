@@ -18,12 +18,7 @@
 # Author: Yoshihiro Tanaka <contact@cordea.jp>
 # date  : 2016-06-23
 
-if [[ $TRAVIS_BRANCH == 'master' ]]; then
-    git clone -b 'v0.13.0' https://github.com/nim-lang/Nim.git
-else
-    git clone -b 'devel' https://github.com/nim-lang/Nim.git
-fi
-
+git clone -b 'devel' https://github.com/nim-lang/Nim.git
 cd Nim
 sh bootstrap.sh
 nim e install_nimble.nims

@@ -18,7 +18,7 @@
 ## signature method supports only HMAC-SHA1.
 ## | Please refer to `OAuth Core 1.0a<http://oauth.net/core/1.0a>`_ details.
 
-import times, math, strutils
+import times, math, random, strutils
 import sha1, base64
 import httpclient, uri
 import subexes
