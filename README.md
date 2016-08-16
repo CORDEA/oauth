@@ -12,6 +12,14 @@ Please read documentation for details.
 - [oauth1](http://cordea.github.io/oauth/docs/oauth1.html)
 - [oauth2](http://cordea.github.io/oauth/docs/oauth2.html)
 
+### Support version
+
+Responding to version of nim is as below.
+
+| nim version | oauth version |
+|:--------|:-----|
+| v0.14.* | v0.3 |
+| v0.13.* | [v0.2](https://github.com/CORDEA/oauth/releases/tag/v0.2) |
 
 ## License
 
