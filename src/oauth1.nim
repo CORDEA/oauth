@@ -192,7 +192,7 @@ proc getOAuth1RequestHeader*(params: OAuth1Parameters, extraHeaders: string): st
 
 proc oAuth1Request(url, consumerKey, consumerSecret: string,
     callback, token, verifier: string = nil, tokenSecret = "",
-    isIncludeVersionToHeader = false, httpMethod = httpGET, extraHeaders = "", body = "",
+    isIncludeVersionToHeader = false, httpMethod = HttpGET, extraHeaders = "", body = "",
     nonce: string = nil, realm: string = nil):Response =
 
     let
@@ -218,7 +218,7 @@ proc oAuth1Request(url, consumerKey, consumerSecret: string,
 
 proc getOAuth1RequestToken*(url, consumerKey, consumerSecret: string,
     callback = "oob", isIncludeVersionToHeader = false,
-    httpMethod = httpPOST, extraHeaders = "", body = "",
+    httpMethod = HttpPOST, extraHeaders = "", body = "",
     realm: string = nil, nonce: string = nil): Response =
     ## A temporary credential requests.
     ## You will receive a request token. Not the access token.
@@ -238,7 +238,7 @@ proc getAuthorizeUrl*(url, requestToken: string): string =
 
 proc getOAuth1AccessToken*(url, consumerKey, consumerSecret,
     requestToken, requestTokenSecret, verifier: string,
-    isIncludeVersionToHeader = false, httpMethod = httpPOST, extraHeaders = "", body = "",
+    isIncludeVersionToHeader = false, httpMethod = HttpPOST, extraHeaders = "", body = "",
     nonce: string = nil, realm: string = nil): Response = 
     ## Get the access token.
     result = oAuth1Request(url, consumerKey, consumerSecret,
@@ -246,7 +246,7 @@ proc getOAuth1AccessToken*(url, consumerKey, consumerSecret,
         isIncludeVersionToHeader, httpMethod, extraHeaders, body, nonce, realm)
     
 proc oAuth1Request*(url, consumerKey, consumerSecret, token, tokenSecret: string,
-    isIncludeVersionToHeader = false, httpMethod = httpGET, extraHeaders = "", body = "",
+    isIncludeVersionToHeader = false, httpMethod = HttpGET, extraHeaders = "", body = "",
     nonce: string = nil, realm: string = nil):Response =
     ## Send an authenticated request to access a protected resource.
     result = oAuth1Request(url, consumerKey, consumerSecret,
