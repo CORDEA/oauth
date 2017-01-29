@@ -23,7 +23,7 @@ Responding to version of nim is as below.
 ## License
 
 ```
-Copyright 2016 Yoshihiro Tanaka
+Copyright 2016-2017 Yoshihiro Tanaka
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
