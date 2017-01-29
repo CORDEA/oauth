@@ -95,25 +95,6 @@ proc createNonce(): string =
 
     result = encode(rst & epoch)
 
-proc httpMethod2String(httpMethod: HttpMethod): string = 
-    case httpMethod
-    of httpHEAD:
-        result = "HEAD"
-    of httpGET:
-        result = "GET"
-    of httpPOST:
-        result = "POST"
-    of httpPUT:
-        result = "PUT"
-    of httpDELETE:
-        result = "DELETE"
-    of httpTRACE:
-        result = "TRACE"
-    of httpOPTIONS:
-        result = "OPTIONS"
-    of httpCONNECT:
-        result = "CONNECT"
-
 proc toArray(params: OAuth1Parameters): seq[array[2, string]] =
     result = @[]
     result.add(["oauth_consumer_key", params.consumerKey])
@@ -169,7 +150,7 @@ proc getSignatureBaseString(httpMethod: HttpMethod, url, body: string, params: O
         requests.add(r)
 
     let param = parameterNormarization(requests)
-    result = httpMethod2String(httpMethod) & "&" & percentEncode(url) & "&" & percentEncode(param)
+    result = $httpMethod & "&" & percentEncode(url) & "&" & percentEncode(param)
 
 proc getSignatureKey(consumerKey: string, token: string): string = 
     ## Generate a signature key.
@@ -211,7 +192,7 @@ proc getOAuth1RequestHeader*(params: OAuth1Parameters, extraHeaders: string): st
 
 proc oAuth1Request(url, consumerKey, consumerSecret: string,
     callback, token, verifier: string = nil, tokenSecret = "",
-    isIncludeVersionToHeader = false, httpMethod = httpGET, extraHeaders = "", body = "",
+    isIncludeVersionToHeader = false, httpMethod = HttpGET, extraHeaders = "", body = "",
     nonce: string = nil, realm: string = nil):Response =
 
     let
@@ -237,7 +218,7 @@ proc oAuth1Request(url, consumerKey, consumerSecret: string,
 
 proc getOAuth1RequestToken*(url, consumerKey, consumerSecret: string,
     callback = "oob", isIncludeVersionToHeader = false,
-    httpMethod = httpPOST, extraHeaders = "", body = "",
+    httpMethod = HttpPOST, extraHeaders = "", body = "",
     realm: string = nil, nonce: string = nil): Response =
     ## A temporary credential requests.
     ## You will receive a request token. Not the access token.
@@ -257,7 +238,7 @@ proc getAuthorizeUrl*(url, requestToken: string): string =
 
 proc getOAuth1AccessToken*(url, consumerKey, consumerSecret,
     requestToken, requestTokenSecret, verifier: string,
-    isIncludeVersionToHeader = false, httpMethod = httpPOST, extraHeaders = "", body = "",
+    isIncludeVersionToHeader = false, httpMethod = HttpPOST, extraHeaders = "", body = "",
     nonce: string = nil, realm: string = nil): Response = 
     ## Get the access token.
     result = oAuth1Request(url, consumerKey, consumerSecret,
@@ -265,7 +246,7 @@ proc getOAuth1AccessToken*(url, consumerKey, consumerSecret,
         isIncludeVersionToHeader, httpMethod, extraHeaders, body, nonce, realm)
     
 proc oAuth1Request*(url, consumerKey, consumerSecret, token, tokenSecret: string,
-    isIncludeVersionToHeader = false, httpMethod = httpGET, extraHeaders = "", body = "",
+    isIncludeVersionToHeader = false, httpMethod = HttpGET, extraHeaders = "", body = "",
     nonce: string = nil, realm: string = nil):Response =
     ## Send an authenticated request to access a protected resource.
     result = oAuth1Request(url, consumerKey, consumerSecret,
@@ -275,16 +256,6 @@ proc oAuth1Request*(url, consumerKey, consumerSecret, token, tokenSecret: string
 when defined(testing):
     # Create nonce
     assert len(createNonce()) == 32
-
-    # HttpMethod to string test
-    assert httpMethod2String(httpHEAD) == "HEAD"
-    assert httpMethod2String(httpGET) == "GET"
-    assert httpMethod2String(httpPOST) == "POST"
-    assert httpMethod2String(httpPUT) == "PUT"
-    assert httpMethod2String(httpDELETE) == "DELETE"
-    assert httpMethod2String(httpTRACE) == "TRACE"
-    assert httpMethod2String(httpOPTIONS) == "OPTIONS"
-    assert httpMethod2String(httpCONNECT) == "CONNECT"
 
 when not defined(ssl):
     echo "SSL support is required."

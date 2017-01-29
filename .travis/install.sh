@@ -20,7 +20,11 @@
 
 git clone -b 'devel' https://github.com/nim-lang/Nim.git
 cd Nim
-sh bootstrap.sh
-nim e install_nimble.nims
-nimble install -y sha1
+git clone --depth 1 https://github.com/nim-lang/csources.git
+cd ./csources/ && sh build.sh
+cd ..
+bin/nim c koch
+./koch boot -d:release
+./koch nimble
+bin/nimble install -y sha1
 cd ..

@@ -5,8 +5,8 @@ os:
 env:
     - PATH=$PWD/Nim/bin:$PATH
 branches:
-    except:
-        - gh-pages
+    only:
+        - develop
 install: .travis/install.sh
 before_script:
     - set -e
