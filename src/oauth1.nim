@@ -182,7 +182,7 @@ proc getOAuth1RequestHeader*(params: OAuth1Parameters, extraHeaders: string): st
     if params.token != nil:
         result = result & subex(", oauth_token=\"$#\"") % [ params.token ]
     if params.callback != nil:
-        result = result & subex(", oauth_callback=\"$#\"") % [ params.callback ]
+        result = result & subex(", oauth_callback=\"$#\"") % [ percentEncode(params.callback) ]
     if params.verifier != nil:
         result = result & subex(", oauth_verifier=\"$#\"") % [ params.verifier ]
     if params.isIncludeVersionToHeader:
