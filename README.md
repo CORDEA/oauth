@@ -16,7 +16,7 @@ Responding to version of nim is as below.
 
 | nim version | oauth version |
 |:--------|:-----|
-| >= v0.15.* | [v0.4](https://github.com/CORDEA/oauth/releases/tag/v0.4) |
+| >= v0.15.* | [v0.4.1](https://github.com/CORDEA/oauth/releases/tag/v0.4.1) |
 | v0.14.* | [v0.3](https://github.com/CORDEA/oauth/releases/tag/v0.3) |
 | v0.13.* | [v0.2](https://github.com/CORDEA/oauth/releases/tag/v0.2) |
 
