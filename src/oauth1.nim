@@ -66,7 +66,7 @@ proc hmacSha1(key, text: string): string =
     else:
         for k in key:
             byte.add k.uint8
-    
+
     for _ in 0..(blockLength - len(byte) - 1):
         byte.add zeroByte
 
@@ -244,7 +244,7 @@ proc getOAuth1AccessToken*(url, consumerKey, consumerSecret,
     result = oAuth1Request(url, consumerKey, consumerSecret,
         nil, requestToken, verifier, requestTokenSecret,
         isIncludeVersionToHeader, httpMethod, extraHeaders, body, nonce, realm)
-    
+
 proc oAuth1Request*(url, consumerKey, consumerSecret, token, tokenSecret: string,
     isIncludeVersionToHeader = false, httpMethod = HttpGET, extraHeaders = "", body = "",
     nonce: string = nil, realm: string = nil):Response =
