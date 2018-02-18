@@ -129,7 +129,7 @@ iterator parseQuery(queries: string): array[2, string] =
     for r in queries.split("&"):
         if r.contains "=":
             let fd = r.find("=")
-            yield [r[0..fd-1], r[fd+1..len(r)]]
+            yield [r[0..fd-1], r[fd+1..len(r)-1]]
 
 proc getSignatureBaseString(httpMethod: HttpMethod, url, body: string, params: OAuth1Parameters): string =
     ## Generate a signature base string.
