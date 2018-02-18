@@ -171,7 +171,7 @@ proc parseResponseBody(body: string): StringTableRef =
     result = newStringTable(modeCaseInsensitive)
     for response in responses:
         let fd = response.find("=")
-        result[response[0..fd-1]] = response[fd+1..len(response)]
+        result[response[0..fd-1]] = response[fd+1..len(response)-1]
 
 proc authorizationCodeGrant*(authorizeUrl, accessTokenRequestUrl, clientId, clientSecret: string,
     html: string = nil, scope: openarray[string] = [], port: int = 8080): Response =
