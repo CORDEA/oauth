@@ -62,10 +62,10 @@ proc hmacSha1(key, text: string): string =
 
     if len(key) > blockLength:
         for b in compute(key):
-            byte.add ord(b)
+            byte.add b
     else:
         for k in key:
-            byte.add ord(k)
+            byte.add k.uint8
     
     for _ in 0..(blockLength - len(byte) - 1):
         byte.add zeroByte
