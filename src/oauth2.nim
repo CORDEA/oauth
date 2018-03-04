@@ -171,7 +171,7 @@ proc parseResponseBody(body: string): StringTableRef =
     result = newStringTable(modeCaseInsensitive)
     for response in responses:
         let fd = response.find("=")
-        result[response[0..fd-1]] = response[fd+1..len(response)]
+        result[response[0..fd-1]] = response[fd+1..len(response)-1]
 
 proc authorizationCodeGrant*(authorizeUrl, accessTokenRequestUrl, clientId, clientSecret: string,
     html: string = nil, scope: openarray[string] = [], port: int = 8080): Response =
@@ -225,7 +225,7 @@ proc resourceOwnerPassCredsGrant*(url, clientId, clientSecret, username, passwor
     ##  | -- https://tools.ietf.org/html/rfc6749#section-4.3
     result = accessTokenRequest(url, clientId, clientSecret, ResourceOwnerPassCreds, useBasicAuth,
         username = username, password = password, scope = scope)
-    
+
 proc clientCredsGrant*(url, clientid, clientsecret: string,
     scope: openarray[string] = [], useBasicAuth: bool = true): Response = 
     ## Send a request for "Client Credentials Grant" type.
@@ -235,7 +235,7 @@ proc refreshToken*(url, clientId, clientSecret, refreshToken: string,
     scope: openarray[string] = [], useBasicAuth: bool = true): Response =
     ## Send an update request of the access token.
     result = accessTokenRequest(url, clientId, clientSecret, RefreshToken, useBasicAuth, refreshToken = refreshToken, scope = scope)
-    
+
 proc bearerRequest*(url, accessToken: string, httpMethod = httpGET, extraHeaders = "", body = ""): Response =
     ## Send a request using the bearer token.
     let header = getBearerRequestHeader(accessToken, extraHeaders, body)

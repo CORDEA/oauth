@@ -62,11 +62,11 @@ proc hmacSha1(key, text: string): string =
 
     if len(key) > blockLength:
         for b in compute(key):
-            byte.add ord(b)
+            byte.add b
     else:
         for k in key:
-            byte.add ord(k)
-    
+            byte.add k.uint8
+
     for _ in 0..(blockLength - len(byte) - 1):
         byte.add zeroByte
 
@@ -129,7 +129,7 @@ iterator parseQuery(queries: string): array[2, string] =
     for r in queries.split("&"):
         if r.contains "=":
             let fd = r.find("=")
-            yield [r[0..fd-1], r[fd+1..len(r)]]
+            yield [r[0..fd-1], r[fd+1..len(r)-1]]
 
 proc getSignatureBaseString(httpMethod: HttpMethod, url, body: string, params: OAuth1Parameters): string =
     ## Generate a signature base string.
@@ -182,7 +182,7 @@ proc getOAuth1RequestHeader*(params: OAuth1Parameters, extraHeaders: string): st
     if params.token != nil:
         result = result & subex(", oauth_token=\"$#\"") % [ params.token ]
     if params.callback != nil:
-        result = result & subex(", oauth_callback=\"$#\"") % [ params.callback ]
+        result = result & subex(", oauth_callback=\"$#\"") % [ percentEncode(params.callback) ]
     if params.verifier != nil:
         result = result & subex(", oauth_verifier=\"$#\"") % [ params.verifier ]
     if params.isIncludeVersionToHeader:
@@ -244,7 +244,7 @@ proc getOAuth1AccessToken*(url, consumerKey, consumerSecret,
     result = oAuth1Request(url, consumerKey, consumerSecret,
         nil, requestToken, verifier, requestTokenSecret,
         isIncludeVersionToHeader, httpMethod, extraHeaders, body, nonce, realm)
-    
+
 proc oAuth1Request*(url, consumerKey, consumerSecret, token, tokenSecret: string,
     isIncludeVersionToHeader = false, httpMethod = HttpGET, extraHeaders = "", body = "",
     nonce: string = nil, realm: string = nil):Response =
