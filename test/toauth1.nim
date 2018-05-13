@@ -71,10 +71,10 @@ suite "OAuth1 test":
     suite "Signature generate test":
         # https://dev.twitter.com/oauth/overview/authorizing-requests
         test "Twitter example":
-            let signature = getSignature(httpPOST, url1, body1, table1, consumerSecret1, tokenSecret1)
+            let signature = getSignature(HttpPOST, url1, body1, table1, consumerSecret1, tokenSecret1)
             check(signature == "tnnArxj06cWHq44gCs1OSKk/jLY=")
 
         test "rfc5849 example":
             # https://tools.ietf.org/html/rfc5849
-            let signature = getSignature(httpGET, url2, "", table2, consumerSecret2, tokenSecret2)
+            let signature = getSignature(HttpGET, url2, "", table2, consumerSecret2, tokenSecret2)
             check(percentEncode(signature) == "MdpQcU8iPSUjWoN%2FUDMsK2sui9I%3D")
