@@ -145,7 +145,7 @@ proc getCallbackParamters(port: Port, html: string): Future[Uri] {.async.} =
                     if line == "\c\L":
                         break
                     let fd = line.find(":")
-                    request.headers[line[0..fd-1].strip()] = line[fd+1..len(line)].strip()
+                    request.headers[line[0..fd-1].strip()] = line[fd+1..len(line)-1].strip()
                 await request.respond(Http200, html)
                 result = url
                 client.close()
