@@ -23,7 +23,7 @@ import json, httpclient
 
 const
     accessTokenUrl = "https://gitlab.com/oauth/token"
-    url = "https://gitlab.com/api/v3/projects/owned?visibility=private"
+    url = "https://gitlab.com/api/v4/projects?visibility=private"
 
 echo "Please enter the application id."
 let clientId = readLine(stdin)
