@@ -113,7 +113,7 @@ proc accessTokenRequest(url, clientId, clientSecret: string, grantType: GrantTyp
         body = body & "&client_id=$#&client_secret=$#" % [ encodeUrl(clientId), encodeUrl(clientSecret) ]
         header = createRequestHeader("", body)
 
-    result = request(url, httpMethod = httpPOST,
+    result = request(url, httpMethod = HttpPOST,
         extraHeaders = header, body = body)
 
 proc getAuthorizationCodeAccessToken*(url, code, clientId, clientSecret: string,
@@ -236,7 +236,7 @@ proc refreshToken*(url, clientId, clientSecret, refreshToken: string,
     ## Send an update request of the access token.
     result = accessTokenRequest(url, clientId, clientSecret, RefreshToken, useBasicAuth, refreshToken = refreshToken, scope = scope)
 
-proc bearerRequest*(url, accessToken: string, httpMethod = httpGET, extraHeaders = "", body = ""): Response =
+proc bearerRequest*(url, accessToken: string, httpMethod = HttpGET, extraHeaders = "", body = ""): Response =
     ## Send a request using the bearer token.
     let header = getBearerRequestHeader(accessToken, extraHeaders, body)
     result = request(url, httpMethod = httpMethod, extraHeaders = header, body = body)
