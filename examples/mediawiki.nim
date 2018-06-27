@@ -17,6 +17,7 @@
 import oauth1
 import tables
 import strutils
+import httpclient
 import uri
 
 const
