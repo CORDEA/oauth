@@ -17,6 +17,7 @@
 import oauth1
 import tables
 import strutils
+import httpclient
 
 const
     requestTokenUrl = "https://api.twitter.com/oauth/request_token"
