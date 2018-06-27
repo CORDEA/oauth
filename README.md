@@ -2,6 +2,12 @@
 
 [![Build Status](https://travis-ci.org/CORDEA/oauth.svg?branch=develop)](https://travis-ci.org/CORDEA/oauth)
 
+## Install
+
+```
+nimble install oauth
+```
+
 ## OAuth library for nim
 
 OAuth is composed of two modules.
