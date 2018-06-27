@@ -17,6 +17,7 @@
 import oauth1
 import tables
 import strutils
+import httpclient
 
 const
     requestTokenUrl = "https://bitbucket.org/api/1.0/oauth/request_token"
