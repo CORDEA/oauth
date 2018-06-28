@@ -90,7 +90,7 @@ proc createNonce(): string =
 
     randomize()
     for i in 0..(23 - len(epoch)):
-        r = random(26)
+        r = rand(26)
         rst = rst & chr(97 + r)
 
     result = encode(rst & epoch)

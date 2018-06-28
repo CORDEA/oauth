@@ -163,7 +163,7 @@ proc createState(): string =
     result = ""
     randomize()
     for i in 0..4:
-        r = random(26)
+        r = rand(26)
         result = result & chr(97 + r)
 
 proc parseResponseBody(body: string): StringTableRef =
