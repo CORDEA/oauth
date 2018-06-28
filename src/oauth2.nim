@@ -289,16 +289,15 @@ when defined(testing):
     # createState test
     assert len(createState()) == 5
 
-    # concatHeader test
-    assert concatHeader("test1\c\L", "test2\c\L") == "test1\c\Ltest2\c\L"
-    assert concatHeader("test1", "test2\c\L") == "test1\c\Ltest2\c\L"
-    assert concatHeader("test1\c\L", "test2") == "test1\c\Ltest2\c\L"
-    assert concatHeader("test1", "test2") == "test1\c\Ltest2\c\L"
-
-    # createRequestHeader test
-    assert createRequestHeader("", "aaaaa") == "Content-Type: application/x-www-form-urlencoded\c\LContent-Length: 5\c\L"
-    assert createRequestHeader("", "") == "Content-Type: application/x-www-form-urlencoded\c\LContent-Length: 0\c\L"
-    assert createRequestHeader("test2", "aaaaa") == "Content-Type: application/x-www-form-urlencoded\c\LContent-Length: 5\c\Ltest2\c\L"
+    # setRequestHeaders test
+    let header = newHttpHeaders()
+    header.setRequestHeaders("aaaaa")
+    assert len(header) == 2
+    assert header["Content-Type"] == "application/x-www-form-urlencoded"
+    assert header["Content-Length"] == "5"
+    header.setRequestHeaders("")
+    assert len(header) == 2
+    assert header["Content-Length"] == "0"
 
 when not defined(ssl):
     echo "SSL support is required."
