@@ -77,7 +77,7 @@ proc getBasicAuthorizationHeader(clientId, clientSecret, body: string): string =
 
 proc getBearerRequestHeader*(accessToken: string): string =
     ## Returns a header necessary to bearer request.
-    result = "Authorization: Bearer " & accessToken  & "\c\L"
+    result = "Authorization: Bearer " & accessToken & "\c\L"
 
 proc getBearerRequestHeader(accessToken, extraHeaders, body: string): string =
     let
