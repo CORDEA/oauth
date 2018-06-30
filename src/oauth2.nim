@@ -23,6 +23,7 @@ import random
 import cgi
 import math
 import times
+import tables
 import subexes
 import strtabs
 import strutils
@@ -82,12 +83,12 @@ proc getBearerRequestHeader*(accessToken: string): HttpHeaders =
     result = newHttpHeaders({"Authorization": "Bearer " & accessToken})
 
 proc getBearerRequestHeader(accessToken: string,
-    extraHeaders: openarray[tuple[key, val: string]],
-    body: string): HttpHeaders =
-    let bearerHeader = getBearerRequestHeader(accessToken)
-    for header in extraHeaders:
-      bearerHeader.add(header.key, header.val)
-    bearerHeader.setRequestHeaders(body)
+    extraHeaders: HttpHeaders, body: string): HttpHeaders =
+    result = getBearerRequestHeader(accessToken)
+    result.setRequestHeaders(body)
+    if extraHeaders != nil:
+      for k, v in extraHeaders.table:
+        result[k] = v
 
 proc accessTokenRequest(client: HttpClient | AsyncHttpClient,
     url, clientId, clientSecret: string,
@@ -258,11 +259,11 @@ proc refreshToken*(client: HttpClient | AsyncHttpClient,
 
 proc bearerRequest*(client: HttpClient | AsyncHttpClient,
     url, accessToken: string, httpMethod = HttpGET,
-    extraHeaders = openarray[tuple[key, val: string]],
+    extraHeaders: HttpHeaders = nil,
     body = ""): Future[Response | AsyncResponse] {.multisync.} =
     ## Send a request using the bearer token.
     let header = getBearerRequestHeader(accessToken, extraHeaders, body)
-    result = await client.request(url, httpMethod = httpMethod, extraHeaders = header, body = body)
+    result = await client.request(url, httpMethod = httpMethod, headers = header, body = body)
 
 when defined(testing):
     # parseResponseBody test
