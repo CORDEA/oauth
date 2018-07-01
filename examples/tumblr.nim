@@ -27,11 +27,11 @@ const
   requestUrl = "https://api.tumblr.com/v2/user/info"
 
 proc parseResponseBody(body: string): Table[string, string] =
-    let responses = body.split("&")
-    result = initTable[string, string]()
-    for response in responses:
-        let r = response.split("=")
-        result[r[0]] = r[1]
+  let responses = body.split("&")
+  result = initTable[string, string]()
+  for response in responses:
+    let r = response.split("=")
+    result[r[0]] = r[1]
 
 when isMainModule:
   echo "Please enter the consumer key."
