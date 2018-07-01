@@ -211,7 +211,7 @@ proc oAuth1Request(client: HttpClient | AsyncHttpClient,
     extraHeaders: HttpHeaders = nil, body = "",
     nonce: string = nil, realm: string = nil): Future[Response | AsyncResponse] {.multisync.} =
     let
-        timestamp = round epochTime()
+        timestamp = int(round(epochTime()))
         nonce = if nonce == nil: createNonce() else: nonce
         params = OAuth1Parameters(
             realm: realm,
