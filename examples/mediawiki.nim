@@ -40,7 +40,9 @@ when isMainModule:
   echo "Please enter the secret token."
   let consumerSecret = readLine stdin
 
-  let requestToken = getOAuth1RequestToken(requestTokenUrl, consumerKey, consumerSecret)
+  let
+    client = newHttpClient()
+    requestToken = client.getOAuth1RequestToken(requestTokenUrl, consumerKey, consumerSecret)
 
   if requestToken.status == "200 OK":
     var response = parseResponseBody requestToken.body
@@ -54,16 +56,19 @@ when isMainModule:
       verifierUrl = readLine stdin
       verifierUri = parseUri verifierUrl
     response = parseResponseBody verifierUri.query
+    # Need to close the client once. but why?
+    client.close()
     let
       verifier = response["oauth_verifier"]
-      accessToken = getOAuth1AccessToken(accessTokenUrl,
+      accessToken = client.getOAuth1AccessToken(accessTokenUrl,
         consumerKey, consumerSecret, requestToken, requestTokenSecret, verifier)
     if accessToken.status == "200 OK":
       response = parseResponseBody accessToken.body
       let
         accessToken = response["oauth_token"]
         accessTokenSecret = response["oauth_token_secret"]
-        identify = oAuth1Request(identifyUrl, consumerKey, consumerSecret, accessToken, accessTokenSecret)
+        identify = client.oAuth1Request(identifyUrl, consumerKey, consumerSecret,
+          accessToken, accessTokenSecret)
       if identify.status == "200 OK":
         echo "\n--- Success ---"
         echo identify.body
