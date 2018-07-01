@@ -17,6 +17,7 @@
 import oauth1
 import tables
 import strutils
+import httpclient
 
 const
     requestTokenUrl = "https://api.twitter.com/oauth/request_token"
@@ -37,7 +38,10 @@ when isMainModule:
     echo "Please enter the consumer key secret (API Secret)."
     let consumerSecret = readLine stdin
 
-    let requestToken = getOAuth1RequestToken(requestTokenUrl, consumerKey, consumerSecret, isIncludeVersionToHeader = true)
+    let
+        client = newHttpClient()
+        requestToken = client.getOAuth1RequestToken(requestTokenUrl, consumerKey,
+            consumerSecret, isIncludeVersionToHeader = true)
 
     if requestToken.status == "200 OK":
         var response = parseResponseBody requestToken.body
@@ -49,12 +53,14 @@ when isMainModule:
         echo "Please enter a verifier key (PIN code)."
         let
             verifier = readLine stdin
-            accessToken = getOAuth1AccessToken(accessTokenUrl,
-                consumerKey, consumerSecret, requestToken, requestTokenSecret, verifier, isIncludeVersionToHeader = true)
+            accessToken = client.getOAuth1AccessToken(accessTokenUrl,
+                consumerKey, consumerSecret, requestToken, requestTokenSecret,
+                verifier, isIncludeVersionToHeader = true)
         if accessToken.status == "200 OK":
             response = parseResponseBody accessToken.body
             let
                 accessToken = response["oauth_token"]
                 accessTokenSecret = response["oauth_token_secret"]
-                timeline = oAuth1Request(requestUrl, consumerKey, consumerSecret, accessToken, accessTokenSecret, isIncludeVersionToHeader = true)
+                timeline = client.oAuth1Request(requestUrl, consumerKey, consumerSecret,
+                    accessToken, accessTokenSecret, isIncludeVersionToHeader = true)
             echo timeline.body

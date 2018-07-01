@@ -17,11 +17,20 @@
 ## This module supports access to resources by OAuth 2.0.
 ## | Please refer to `OAuth Core 2.0<http://oauth.net/2/>`_ details.
 
-import uri, base64
-import random, math, times
-import asynchttpserver, asyncdispatch, asyncnet
-import httpclient, cgi
-import subexes, strtabs, strutils
+import uri
+import base64
+import random
+import cgi
+import math
+import times
+import tables
+import subexes
+import strtabs
+import strutils
+import asynchttpserver
+import asyncdispatch
+import asyncnet
+import httpclient
 
 type
     GrantType = enum
@@ -31,24 +40,18 @@ type
         ClientCreds = "client_credentials",
         RefreshToken = "refresh_token"
 
-proc concatHeader(h0, h1: string): string =
-    result = ""
-    for h in @[h0, h1]:
-        result = result & h
-        if len(h) > 0 and not h.endsWith("\c\L"):
-            result = result & "\c\L"
-
-proc createRequestHeader(extraHeaders: string, body: string): string =
-    result = "Content-Type: application/x-www-form-urlencoded\c\L"
-    result = "$#Content-Length: $#\c\L" % [ result, $len(body) ]
-    result = concatHeader(result, extraHeaders)
+proc setRequestHeaders(headers: HttpHeaders, body: string) =
+    headers["Content-Type"] = "application/x-www-form-urlencoded"
+    headers["Content-Length"] = $len(body)
 
 proc getGrantUrl(url, clientId: string, grantType: GrantType,
     redirectUri, state: string, scope: openarray[string] = []): string = 
     var url = url
     let parsed = parseUri(url)
     url = url & (if parsed.query == "": "?" else: "&")
-    url = url & subex("response_type=$#&client_id=$#&state=$#") % [ (if grantType == AuthorizationCode: "code" else: "token"), encodeUrl(clientId), state ]
+    url = url & subex("response_type=$#&client_id=$#&state=$#") % [
+        (if grantType == AuthorizationCode: "code" else: "token"), encodeUrl(clientId), state
+    ]
     if redirectUri != nil:
         url = url & subex("&redirect_uri=$#") % [ encodeUrl(redirectUri) ]
     if len(scope) != 0:
@@ -65,28 +68,33 @@ proc getImplicitGrantUrl*(url, clientId: string,
     ## Returns the URL for sending authorization requests in "Implicit Grant" type.
     result = getGrantUrl(url, clientId, Implicit, redirectUri, state, scope)
 
-proc getBasicAuthorizationHeader*(clientId, clientSecret: string): string =
+proc getBasicAuthorizationHeader*(clientId, clientSecret: string): HttpHeaders =
     ## Returns a header necessary to basic authentication.
     var auth = encode(clientId & ":" & clientSecret)
     auth = auth.replace("\c\L", "")
-    result = "Authorization: Basic " & auth & "\c\L"
+    result = newHttpHeaders({"Authorization": "Basic " & auth})
 
-proc getBasicAuthorizationHeader(clientId, clientSecret, body: string): string =
-    let header = getBasicAuthorizationHeader(clientId, clientSecret)
-    result = createRequestHeader(header, body)
+proc getBasicAuthorizationHeader(clientId, clientSecret, body: string): HttpHeaders =
+    result = getBasicAuthorizationHeader(clientId, clientSecret)
+    result.setRequestHeaders(body)
 
-proc getBearerRequestHeader*(accessToken: string): string =
+proc getBearerRequestHeader*(accessToken: string): HttpHeaders =
     ## Returns a header necessary to bearer request.
-    result = "Authorization: Bearer " & accessToken  & "\c\L"
+    result = newHttpHeaders({"Authorization": "Bearer " & accessToken})
 
-proc getBearerRequestHeader(accessToken, extraHeaders, body: string): string =
-    let
-        bearerHeader = getBearerRequestHeader(accessToken)
-        header = concatHeader(bearerHeader, extraHeaders)
-    result = createRequestHeader(header, body)
+proc getBearerRequestHeader(accessToken: string,
+    extraHeaders: HttpHeaders, body: string): HttpHeaders =
+    result = getBearerRequestHeader(accessToken)
+    result.setRequestHeaders(body)
+    if extraHeaders != nil:
+      for k, v in extraHeaders.table:
+        result[k] = v
 
-proc accessTokenRequest(url, clientId, clientSecret: string, grantType: GrantType, useBasicAuth: bool,
-    code, redirectUri, username, password, refreshToken: string = nil, scope: openarray[string] = []): Response =
+proc accessTokenRequest(client: HttpClient | AsyncHttpClient,
+    url, clientId, clientSecret: string,
+    grantType: GrantType, useBasicAuth: bool,
+    code, redirectUri, username, password, refreshToken: string = nil,
+    scope: seq[string] = @[]): Future[Response | AsyncResponse] {.multisync.} =
     var body = "grant_type=" & $grantType
     case grantType
     of ResourceOwnerPassCreds:
@@ -106,20 +114,22 @@ proc accessTokenRequest(url, clientId, clientSecret: string, grantType: GrantTyp
             body = body & subex("&scope=$#") % [ encodeUrl(scope.join(" ")) ]
     else: discard
 
-    var header: string
+    var header: HttpHeaders
     if useBasicAuth:
         header = getBasicAuthorizationHeader(clientId, clientSecret, body)
     else:
         body = body & "&client_id=$#&client_secret=$#" % [ encodeUrl(clientId), encodeUrl(clientSecret) ]
-        header = createRequestHeader("", body)
+        header = newHttpHeaders()
+        header.setRequestHeaders(body)
 
-    result = request(url, httpMethod = httpPOST,
-        extraHeaders = header, body = body)
+    result = await client.request(url, httpMethod = HttpPOST, headers = header, body = body)
 
-proc getAuthorizationCodeAccessToken*(url, code, clientId, clientSecret: string,
-    redirectUri: string = nil, useBasicAuth: bool = true): Response =
+proc getAuthorizationCodeAccessToken*(client: HttpClient | AsyncHttpClient,
+    url, code, clientId, clientSecret: string,
+    redirectUri: string = nil, useBasicAuth: bool = true): Future[Response | AsyncResponse] {.multisync.}=
     ## Send the access token request for "Authorization Code Grant" type.
-    result = accessTokenRequest(url, clientId, clientSecret, AuthorizationCode, useBasicAuth, code, redirectUri)
+    result = await client.accessTokenRequest(url, clientId, clientSecret,
+        AuthorizationCode, useBasicAuth, code, redirectUri)
 
 # ref. https://github.com/nim-lang/Nim/blob/master/lib/pure/asynchttpserver.nim#L154
 proc getCallbackParamters(port: Port, html: string): Future[Uri] {.async.} =
@@ -145,7 +155,7 @@ proc getCallbackParamters(port: Port, html: string): Future[Uri] {.async.} =
                     if line == "\c\L":
                         break
                     let fd = line.find(":")
-                    request.headers[line[0..fd-1].strip()] = line[fd+1..len(line)].strip()
+                    request.headers[line[0..fd-1].strip()] = line[fd+1..len(line)-1].strip()
                 await request.respond(Http200, html)
                 result = url
                 client.close()
@@ -163,7 +173,7 @@ proc createState(): string =
     result = ""
     randomize()
     for i in 0..4:
-        r = random(26)
+        r = rand(26)
         result = result & chr(97 + r)
 
 proc parseResponseBody(body: string): StringTableRef =
@@ -173,8 +183,10 @@ proc parseResponseBody(body: string): StringTableRef =
         let fd = response.find("=")
         result[response[0..fd-1]] = response[fd+1..len(response)-1]
 
-proc authorizationCodeGrant*(authorizeUrl, accessTokenRequestUrl, clientId, clientSecret: string,
-    html: string = nil, scope: openarray[string] = [], port: int = 8080): Response =
+proc authorizationCodeGrant*(client: HttpClient | AsyncHttpClient,
+    authorizeUrl, accessTokenRequestUrl, clientId, clientSecret: string,
+    html: string = nil, scope: seq[string] = @[],
+    port: int = 8080): Future[Response | AsyncResponse] {.multisync.} =
     ## Send a request for "Authorization Code Grant" type.
     ## | This method, outputs a URL for the authorization request at first.
     ## | Then, wait for the callback at "http://localhost:${port}".
@@ -193,7 +205,8 @@ proc authorizationCodeGrant*(authorizeUrl, accessTokenRequestUrl, clientId, clie
         uri = waitFor getCallbackParamters(Port(port), html)
         params = parseResponseBody(uri.query)
     assert params["state"] == state
-    result = getAuthorizationCodeAccessToken(accessTokenRequestUrl, params["code"], clientId, clientSecret, redirectUri)
+    result = await client.getAuthorizationCodeAccessToken(accessTokenRequestUrl, params["code"],
+        clientId, clientSecret, redirectUri)
 
 proc implicitGrant*(url, clientId: string, html: string = nil,
     scope: openarray[string] = [], port: int = 8080): string =
@@ -217,29 +230,40 @@ proc implicitGrant*(url, clientId: string, html: string = nil,
     assert params["state"] == state
     result = query
 
-proc resourceOwnerPassCredsGrant*(url, clientId, clientSecret, username, password: string,
-    scope: openarray[string] = [], useBasicAuth: bool = true): Response = 
+proc resourceOwnerPassCredsGrant*(client: HttpClient | AsyncHttpClient,
+    url, clientId, clientSecret, username, password: string,
+    scope: seq[string] = @[],
+    useBasicAuth: bool = true): Future[Response | AsyncResponse] {.multisync.} =
     ## Send a request for "Resource Owner Password Credentials Grant" type.
     ##
     ##  | The client MUST discard the credentials once an access token has been obtained.
     ##  | -- https://tools.ietf.org/html/rfc6749#section-4.3
-    result = accessTokenRequest(url, clientId, clientSecret, ResourceOwnerPassCreds, useBasicAuth,
-        username = username, password = password, scope = scope)
+    result = await client.accessTokenRequest(url, clientId, clientSecret, ResourceOwnerPassCreds,
+        useBasicAuth, username = username, password = password, scope = scope)
 
-proc clientCredsGrant*(url, clientid, clientsecret: string,
-    scope: openarray[string] = [], useBasicAuth: bool = true): Response = 
+proc clientCredsGrant*(client: HttpClient | AsyncHttpClient,
+    url, clientid, clientsecret: string,
+    scope: seq[string] = @[],
+    useBasicAuth: bool = true): Future[Response | AsyncResponse] {.multisync.} =
     ## Send a request for "Client Credentials Grant" type.
-    result = accessTokenRequest(url, clientId, clientSecret, ClientCreds, useBasicAuth, scope = scope)
+    result = await client.accessTokenRequest(url, clientId, clientSecret, ClientCreds,
+        useBasicAuth, scope = scope)
 
-proc refreshToken*(url, clientId, clientSecret, refreshToken: string,
-    scope: openarray[string] = [], useBasicAuth: bool = true): Response =
+proc refreshToken*(client: HttpClient | AsyncHttpClient,
+    url, clientId, clientSecret, refreshToken: string,
+    scope: seq[string] = @[],
+    useBasicAuth: bool = true): Future[Response | AsyncResponse] {.multisync.} =
     ## Send an update request of the access token.
-    result = accessTokenRequest(url, clientId, clientSecret, RefreshToken, useBasicAuth, refreshToken = refreshToken, scope = scope)
+    result = await client.accessTokenRequest(url, clientId, clientSecret, RefreshToken,
+        useBasicAuth, refreshToken = refreshToken, scope = scope)
 
-proc bearerRequest*(url, accessToken: string, httpMethod = httpGET, extraHeaders = "", body = ""): Response =
+proc bearerRequest*(client: HttpClient | AsyncHttpClient,
+    url, accessToken: string, httpMethod = HttpGET,
+    extraHeaders: HttpHeaders = nil,
+    body = ""): Future[Response | AsyncResponse] {.multisync.} =
     ## Send a request using the bearer token.
     let header = getBearerRequestHeader(accessToken, extraHeaders, body)
-    result = request(url, httpMethod = httpMethod, extraHeaders = header, body = body)
+    result = await client.request(url, httpMethod = httpMethod, headers = header, body = body)
 
 when defined(testing):
     # parseResponseBody test
@@ -266,16 +290,15 @@ when defined(testing):
     # createState test
     assert len(createState()) == 5
 
-    # concatHeader test
-    assert concatHeader("test1\c\L", "test2\c\L") == "test1\c\Ltest2\c\L"
-    assert concatHeader("test1", "test2\c\L") == "test1\c\Ltest2\c\L"
-    assert concatHeader("test1\c\L", "test2") == "test1\c\Ltest2\c\L"
-    assert concatHeader("test1", "test2") == "test1\c\Ltest2\c\L"
-
-    # createRequestHeader test
-    assert createRequestHeader("", "aaaaa") == "Content-Type: application/x-www-form-urlencoded\c\LContent-Length: 5\c\L"
-    assert createRequestHeader("", "") == "Content-Type: application/x-www-form-urlencoded\c\LContent-Length: 0\c\L"
-    assert createRequestHeader("test2", "aaaaa") == "Content-Type: application/x-www-form-urlencoded\c\LContent-Length: 5\c\Ltest2\c\L"
+    # setRequestHeaders test
+    let header = newHttpHeaders()
+    header.setRequestHeaders("aaaaa")
+    assert len(header) == 2
+    assert header["Content-Type"] == "application/x-www-form-urlencoded"
+    assert header["Content-Length"] == "5"
+    header.setRequestHeaders("")
+    assert len(header) == 2
+    assert header["Content-Length"] == "0"
 
 when not defined(ssl):
     echo "SSL support is required."

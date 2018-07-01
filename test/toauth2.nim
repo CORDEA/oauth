@@ -15,6 +15,7 @@
 # date  :2016-03-15
 
 import unittest
+import httpclient
 import ../src/oauth2
 
 suite "OAuth2 test":
@@ -26,17 +27,17 @@ suite "OAuth2 test":
             state = "xyz"
 
     test "authorization code grant url":
-        let correct = "http://server.example.com/authorize?response_type=code&client_id=s6BhdRkqt3&state=xyz&redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb"
+        let correct = "http://server.example.com/authorize?response_type=code&client_id=s6BhdRkqt3&state=xyz&redirect_uri=https%3A%2F%2Fclient.example.com%2Fcb"
         check(getAuthorizationCodeGrantUrl(url, clientId, redirectUri, state) == correct)
 
     test "implicit grant url":
-        let correct = "http://server.example.com/authorize?response_type=token&client_id=s6BhdRkqt3&state=xyz&redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb"
+        let correct = "http://server.example.com/authorize?response_type=token&client_id=s6BhdRkqt3&state=xyz&redirect_uri=https%3A%2F%2Fclient.example.com%2Fcb"
         check(getImplicitGrantUrl(url, clientId, redirectUri, state) == correct)
 
     test "get basic authorization header":
         let header = getBasicAuthorizationHeader("Aladdin", "open sesame")
-        assert header == "Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==\c\L"
+        assert header["Authorization"] == "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=="
 
     test "get bearer request header":
         let header = getBearerRequestHeader("Aladdin")
-        assert header == "Authorization: Bearer Aladdin\c\L"
+        assert header["Authorization"] == "Bearer Aladdin"

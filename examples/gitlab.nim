@@ -14,8 +14,8 @@
 # Author: Yoshihiro Tanaka <contact@cordea.jp>
 # date  :2016-03-14
 
-import oauth2.nim
-import json
+import oauth2
+import json, httpclient
 
 ## This is an example to get the access token by "Resource Owner Password Credentials Grant".
 ## Gitlab API also supports "Web Application Flow". 
@@ -23,7 +23,7 @@ import json
 
 const
     accessTokenUrl = "https://gitlab.com/oauth/token"
-    url = "https://gitlab.com/api/v3/projects/owned?visibility=private"
+    url = "https://gitlab.com/api/v4/projects?visibility=private"
 
 echo "Please enter the application id."
 let clientId = readLine(stdin)
@@ -35,7 +35,8 @@ echo "Please enter the your password."
 let userPassword = readLine(stdin)
 
 let
-    response = resourceOwnerPassCredsGrant(accessTokenUrl, clientId, clientSecret,
+    client = newHttpClient()
+    response = client.resourceOwnerPassCredsGrant(accessTokenUrl, clientId, clientSecret,
         userId, userPassword)
     obj = parseJson(response.body)
     accessToken = obj["access_token"].str
@@ -43,5 +44,5 @@ let
     refreshToken = obj["refresh_token"].str
 
 if tokenType == "bearer":
-    let r = bearerRequest(url, accessToken)
+    let r = client.bearerRequest(url, accessToken)
     echo r.body

@@ -19,6 +19,23 @@ import ../src/oauth1
 import httpclient
 import strtabs
 
+proc mockOAuth1Parameters(
+        realm = "_realm", token = "_token",
+        callback = "_callback", verifier = "_verifier",
+        isIncludeVersion = true): OAuth1Parameters =
+    result = OAuth1Parameters(
+        realm: realm,
+        consumerKey: "_consumerKey",
+        nonce: "_nonce",
+        signature: "_signature",
+        signatureMethod: "_signatureMethod",
+        timestamp: "_timestamp",
+        token: token,
+        callback: callback,
+        verifier: verifier,
+        isIncludeVersionToHeader: isIncludeVersion
+    )
+
 suite "OAuth1 test":
     setup:
         const
@@ -71,10 +88,41 @@ suite "OAuth1 test":
     suite "Signature generate test":
         # https://dev.twitter.com/oauth/overview/authorizing-requests
         test "Twitter example":
-            let signature = getSignature(httpPOST, url1, body1, table1, consumerSecret1, tokenSecret1)
+            let signature = getSignature(HttpPOST, url1, body1, table1, consumerSecret1, tokenSecret1)
             check(signature == "tnnArxj06cWHq44gCs1OSKk/jLY=")
 
         test "rfc5849 example":
             # https://tools.ietf.org/html/rfc5849
-            let signature = getSignature(httpGET, url2, "", table2, consumerSecret2, tokenSecret2)
+            let signature = getSignature(HttpGET, url2, "", table2, consumerSecret2, tokenSecret2)
             check(percentEncode(signature) == "MdpQcU8iPSUjWoN%2FUDMsK2sui9I%3D")
+
+    suite "OAuth1 request header test":
+        test "all parameters should be included to header":
+            let header = getOAuth1RequestHeader(mockOAuth1Parameters())
+            check(header["Content-Type"] == "application/x-www-form-urlencoded")
+            check(header["Authorization"] == "OAuth realm=\"_realm\", oauth_consumer_key=\"_consumerKey\", oauth_signature_method=\"_signatureMethod\", oauth_timestamp=\"_timestamp\", oauth_nonce=\"_nonce\", oauth_signature=\"_signature\", oauth_token=\"_token\", oauth_callback=\"_callback\", oauth_verifier=\"_verifier\", oauth_version=\"1.0\"")
+
+        test "realm should be erased from header when realm is nil":
+            let header = getOAuth1RequestHeader(mockOAuth1Parameters(realm = nil))
+            check(header["Authorization"] == "OAuth oauth_consumer_key=\"_consumerKey\", oauth_signature_method=\"_signatureMethod\", oauth_timestamp=\"_timestamp\", oauth_nonce=\"_nonce\", oauth_signature=\"_signature\", oauth_token=\"_token\", oauth_callback=\"_callback\", oauth_verifier=\"_verifier\", oauth_version=\"1.0\"")
+
+        test "oauth_token should be erased from header when token is nil":
+            let header = getOAuth1RequestHeader(mockOAuth1Parameters(token = nil))
+            check(header["Authorization"] == "OAuth realm=\"_realm\", oauth_consumer_key=\"_consumerKey\", oauth_signature_method=\"_signatureMethod\", oauth_timestamp=\"_timestamp\", oauth_nonce=\"_nonce\", oauth_signature=\"_signature\", oauth_callback=\"_callback\", oauth_verifier=\"_verifier\", oauth_version=\"1.0\"")
+
+        test "oauth_callback should be erased from header when callback is nil":
+            let header = getOAuth1RequestHeader(mockOAuth1Parameters(callback = nil))
+            check(header["Authorization"] == "OAuth realm=\"_realm\", oauth_consumer_key=\"_consumerKey\", oauth_signature_method=\"_signatureMethod\", oauth_timestamp=\"_timestamp\", oauth_nonce=\"_nonce\", oauth_signature=\"_signature\", oauth_token=\"_token\", oauth_verifier=\"_verifier\", oauth_version=\"1.0\"")
+
+        test "oauth_token should be erased from header when token is nil":
+            let header = getOAuth1RequestHeader(mockOAuth1Parameters(verifier = nil))
+            check(header["Authorization"] == "OAuth realm=\"_realm\", oauth_consumer_key=\"_consumerKey\", oauth_signature_method=\"_signatureMethod\", oauth_timestamp=\"_timestamp\", oauth_nonce=\"_nonce\", oauth_signature=\"_signature\", oauth_token=\"_token\", oauth_callback=\"_callback\", oauth_version=\"1.0\"")
+
+        test "oauth_version should be erased from header when isIncludeVersionToHeader is false":
+            let header = getOAuth1RequestHeader(mockOAuth1Parameters(isIncludeVersion = false))
+            check(header["Authorization"] == "OAuth realm=\"_realm\", oauth_consumer_key=\"_consumerKey\", oauth_signature_method=\"_signatureMethod\", oauth_timestamp=\"_timestamp\", oauth_nonce=\"_nonce\", oauth_signature=\"_signature\", oauth_token=\"_token\", oauth_callback=\"_callback\", oauth_verifier=\"_verifier\"")
+
+        test "headers should be overwritten by extra headers":
+            let header = getOAuth1RequestHeader(mockOAuth1Parameters(), newHttpHeaders({"Authorization": "auth", "Extra": "header"}))
+            check(header["Authorization"] == "auth")
+            check(header["Extra"] == "header")
