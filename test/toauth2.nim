@@ -15,6 +15,7 @@
 # date  :2016-03-15
 
 import unittest
+import httpclient
 import ../src/oauth2
 
 suite "OAuth2 test":
@@ -35,8 +36,8 @@ suite "OAuth2 test":
 
     test "get basic authorization header":
         let header = getBasicAuthorizationHeader("Aladdin", "open sesame")
-        assert header == "Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==\c\L"
+        assert header["Authorization"] == "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=="
 
     test "get bearer request header":
         let header = getBearerRequestHeader("Aladdin")
-        assert header == "Authorization: Bearer Aladdin\c\L"
+        assert header["Authorization"] == "Bearer Aladdin"

@@ -15,14 +15,15 @@
 # date  :2016-03-07
 
 import oauth1
+import uri
 import tables
 import strutils
 import httpclient
 
 const
-    requestTokenUrl = "https://bitbucket.org/api/1.0/oauth/request_token"
-    authorizeUrl = "https://bitbucket.org/api/1.0/oauth/authenticate"
-    accessTokenUrl = "https://bitbucket.org/api/1.0/oauth/access_token"
+    requestTokenUrl = "https://bitbucket.org/!api/1.0/oauth/request_token"
+    authorizeUrl = "https://bitbucket.org/!api/1.0/oauth/authenticate"
+    accessTokenUrl = "https://bitbucket.org/!api/1.0/oauth/access_token"
     requestUrl = "https://api.bitbucket.org/2.0/user/emails"
 
 proc parseResponseBody(body: string): Table[string, string] =
@@ -38,25 +39,33 @@ when isMainModule:
     echo "Please enter the secret."
     let consumerSecret = readLine stdin
 
-    let requestToken = getOAuth1RequestToken(requestTokenUrl, consumerKey, consumerSecret, isIncludeVersionToHeader = true)
+    let
+        client = newHttpClient()
+        requestToken = client.getOAuth1RequestToken(requestTokenUrl, consumerKey,
+            consumerSecret, callback = "http://localhost", isIncludeVersionToHeader = true)
 
     if requestToken.status == "200 OK":
         var response = parseResponseBody requestToken.body
         let 
             requestToken = response["oauth_token"]
             requestTokenSecret = response["oauth_token_secret"]
-        echo "Access the url, please obtain the verifier key."
+        echo "Access the url, please obtain the redirect url."
         echo getAuthorizeUrl(authorizeUrl, requestToken)
-        echo "Please enter a verifier key."
+        echo "Please enter a redirect url."
         let
-            verifier = readLine stdin
-            accessToken = getOAuth1AccessToken(accessTokenUrl,
-                consumerKey, consumerSecret, requestToken, requestTokenSecret, verifier, isIncludeVersionToHeader = true)
+            verifierUrl = readLine stdin
+            verifierUri = parseUri verifierUrl
+        response = parseResponseBody verifierUri.query
+        let
+            verifier = response["oauth_verifier"]
+            accessToken = client.getOAuth1AccessToken(accessTokenUrl,
+                consumerKey, consumerSecret, requestToken, requestTokenSecret,
+                verifier, isIncludeVersionToHeader = true)
         if accessToken.status == "200 OK":
             response = parseResponseBody accessToken.body
             let
                 accessToken = response["oauth_token"]
                 accessTokenSecret = response["oauth_token_secret"]
-
-            let emails = oAuth1Request(requestUrl, consumerKey, consumerSecret, accessToken, accessTokenSecret, isIncludeVersionToHeader = true)
+                emails = client.oAuth1Request(requestUrl, consumerKey, consumerSecret,
+                    accessToken, accessTokenSecret, isIncludeVersionToHeader = true)
             echo emails.body 

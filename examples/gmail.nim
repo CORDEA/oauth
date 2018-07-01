@@ -15,7 +15,8 @@
 # date  :2016-03-08
 
 import oauth2
-import strutils, httpclient
+import strutils
+import httpclient
 import json
 
 const
@@ -30,8 +31,11 @@ echo "Please enter the client secret."
 let clientSecret = readLine(stdin)
 
 echo "Please go to this url."
-let response = authorizationCodeGrant(authorizeUrl, accessTokenUrl,
-    clientId, clientSecret, html, scope = @["https://www.googleapis.com/auth/gmail.readonly"])
+let
+    client = newHttpClient()
+    response = client.authorizationCodeGrant(authorizeUrl, accessTokenUrl,
+        clientId, clientSecret, html,
+        scope = @["https://www.googleapis.com/auth/gmail.readonly"])
 
 echo "Please enter your email address."
 let
@@ -43,5 +47,5 @@ let
     refreshToken = obj["refresh_token"].str
 
 if tokenType == "Bearer":
-    let r = bearerRequest(url, accessToken)
+    let r = client.bearerRequest(url, accessToken)
     echo r.body
