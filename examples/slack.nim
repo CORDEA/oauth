@@ -31,12 +31,11 @@ echo "Please enter the client secret."
 let clientSecret = readLine(stdin)
 
 echo "Please go to this url."
-let response = authorizationCodeGrant(authorizeUrl, accessTokenUrl,
-    clientId, clientSecret, html, scope = @["channels:read"])
-
 let
+    client = newHttpClient()
+    response = client.authorizationCodeGrant(authorizeUrl, accessTokenUrl,
+        clientId, clientSecret, html, scope = @["channels:read"])
     obj = parseJson(response.body)
     accessToken = obj["access_token"].str
-
-let r = getContent(url & "?token=" & accessToken)
+    r = client.getContent(url & "?token=" & accessToken)
 echo r

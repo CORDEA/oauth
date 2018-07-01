@@ -35,7 +35,8 @@ echo "Please enter the your password."
 let userPassword = readLine(stdin)
 
 let
-    response = resourceOwnerPassCredsGrant(accessTokenUrl, clientId, clientSecret,
+    client = newHttpClient()
+    response = client.resourceOwnerPassCredsGrant(accessTokenUrl, clientId, clientSecret,
         userId, userPassword)
     obj = parseJson(response.body)
     accessToken = obj["access_token"].str
@@ -43,5 +44,5 @@ let
     refreshToken = obj["refresh_token"].str
 
 if tokenType == "bearer":
-    let r = bearerRequest(url, accessToken)
+    let r = client.bearerRequest(url, accessToken)
     echo r.body
