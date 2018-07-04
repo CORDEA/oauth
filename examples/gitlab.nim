@@ -41,7 +41,6 @@ let
     obj = parseJson(response.body)
     accessToken = obj["access_token"].str
     tokenType = obj["token_type"].str
-    refreshToken = obj["refresh_token"].str
 
 if tokenType == "bearer":
     let r = client.bearerRequest(url, accessToken)
