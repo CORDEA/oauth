@@ -52,19 +52,19 @@ proc getGrantUrl(url, clientId: string, grantType: GrantType,
     url = url & subex("response_type=$#&client_id=$#&state=$#") % [
         (if grantType == AuthorizationCode: "code" else: "token"), encodeUrl(clientId), state
     ]
-    if redirectUri != nil:
+    if len(redirectUri) > 0:
         url = url & subex("&redirect_uri=$#") % [ encodeUrl(redirectUri) ]
-    if len(scope) != 0:
+    if len(scope) > 0:
         url = url & subex("&scope=$#") % [ encodeUrl(scope.join(" ")) ]
     result = url
 
 proc getAuthorizationCodeGrantUrl*(url, clientId: string,
-    redirectUri, state: string = nil, scope: openarray[string] = []): string =
+    redirectUri, state: string = "", scope: openarray[string] = []): string =
     ## Returns the URL for sending authorization requests in "Authorization Code Grant" type.
     result = getGrantUrl(url, clientId, AuthorizationCode, redirectUri, state, scope)
 
 proc getImplicitGrantUrl*(url, clientId: string,
-    redirectUri, state: string = nil, scope: openarray[string] = []): string =
+    redirectUri, state: string = "", scope: openarray[string] = []): string =
     ## Returns the URL for sending authorization requests in "Implicit Grant" type.
     result = getGrantUrl(url, clientId, Implicit, redirectUri, state, scope)
 
@@ -93,24 +93,24 @@ proc getBearerRequestHeader(accessToken: string,
 proc accessTokenRequest(client: HttpClient | AsyncHttpClient,
     url, clientId, clientSecret: string,
     grantType: GrantType, useBasicAuth: bool,
-    code, redirectUri, username, password, refreshToken: string = nil,
+    code, redirectUri, username, password, refreshToken: string = "",
     scope: seq[string] = @[]): Future[Response | AsyncResponse] {.multisync.} =
     var body = "grant_type=" & $grantType
     case grantType
     of ResourceOwnerPassCreds:
         body = body & subex("&username=$#&password=$#") % [ username, password ]
-        if len(scope) != 0:
+        if len(scope) > 0:
             body = body & subex("&scope=$#") % [ encodeUrl(scope.join(" ")) ]
     of AuthorizationCode:
         body = body & subex("&code=$#") % [ encodeUrl(code) ]
-        if redirectUri != nil:
+        if len(redirectUri) > 0:
             body = body & subex("&redirect_uri=$#") % [ encodeUrl(redirectUri) ]
     of ClientCreds:
-        if len(scope) != 0:
+        if len(scope) > 0:
             body = body & subex("&scope=$#") % [ encodeUrl(scope.join(" ")) ]
     of RefreshToken:
         body = body & subex("&refresh_token=$#") % [ encodeUrl(refreshToken) ]
-        if len(scope) != 0:
+        if len(scope) > 0:
             body = body & subex("&scope=$#") % [ encodeUrl(scope.join(" ")) ]
     else: discard
 
@@ -126,7 +126,7 @@ proc accessTokenRequest(client: HttpClient | AsyncHttpClient,
 
 proc getAuthorizationCodeAccessToken*(client: HttpClient | AsyncHttpClient,
     url, code, clientId, clientSecret: string,
-    redirectUri: string = nil, useBasicAuth: bool = true): Future[Response | AsyncResponse] {.multisync.}=
+    redirectUri: string = "", useBasicAuth: bool = true): Future[Response | AsyncResponse] {.multisync.}=
     ## Send the access token request for "Authorization Code Grant" type.
     result = await client.accessTokenRequest(url, clientId, clientSecret,
         AuthorizationCode, useBasicAuth, code, redirectUri)
@@ -140,7 +140,7 @@ proc getCallbackParamters(port: Port, html: string): Future[Uri] {.async.} =
     proc processClient(client: AsyncSocket): Future[string] {.async.} =
         var request = Request()
         request.headers = newHttpHeaders()
-        result = nil
+        result = ""
         while not client.isClosed:
             assert client != nil
             request.client = client
@@ -164,7 +164,7 @@ proc getCallbackParamters(port: Port, html: string): Future[Uri] {.async.} =
     while true:
         var fut = await socket.acceptAddr()
         url = await processClient(fut.client)
-        if url != nil:
+        if len(url) > 0:
             break
     result = parseUri url
 
@@ -185,16 +185,13 @@ proc parseResponseBody(body: string): StringTableRef =
 
 proc authorizationCodeGrant*(client: HttpClient | AsyncHttpClient,
     authorizeUrl, accessTokenRequestUrl, clientId, clientSecret: string,
-    html: string = nil, scope: seq[string] = @[],
+    html: string = "", scope: seq[string] = @[],
     port: int = 8080): Future[Response | AsyncResponse] {.multisync.} =
     ## Send a request for "Authorization Code Grant" type.
     ## | This method, outputs a URL for the authorization request at first.
     ## | Then, wait for the callback at "http://localhost:${port}".
     ## | When receiving the callback, check the state, and request an access token to the server.
     ## | Returns the request result of the access token.
-    var html = html
-    if html == nil:
-        html = ""
     let
         state = createState()
         redirectUri = "http://localhost:" & $port
@@ -208,15 +205,12 @@ proc authorizationCodeGrant*(client: HttpClient | AsyncHttpClient,
     result = await client.getAuthorizationCodeAccessToken(accessTokenRequestUrl, params["code"],
         clientId, clientSecret, redirectUri)
 
-proc implicitGrant*(url, clientId: string, html: string = nil,
+proc implicitGrant*(url, clientId: string, html: string = "",
     scope: openarray[string] = [], port: int = 8080): string =
     ## Send a request for "Implicit Grant" type.
     ## | This method, outputs a URL for the authorization request at first.
     ## | Then, wait for the callback at "http://localhost:${port}".
     ## | When receiving the callback, check the state, returns the Uri.query as a result.
-    var html = html
-    if html == nil:
-        html = ""
     let
         state = createState()
         redirectUri = "http://localhost:" & $port
