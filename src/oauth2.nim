@@ -24,7 +24,6 @@ import cgi
 import math
 import times
 import tables
-import subexes
 import strtabs
 import strutils
 import asynchttpserver
@@ -45,17 +44,16 @@ proc setRequestHeaders(headers: HttpHeaders, body: string) =
     headers["Content-Length"] = $len(body)
 
 proc getGrantUrl(url, clientId: string, grantType: GrantType,
-    redirectUri, state: string, scope: openarray[string] = []): string = 
+    redirectUri, state: string, scope: openarray[string] = []): string =
     var url = url
     let parsed = parseUri(url)
     url = url & (if parsed.query == "": "?" else: "&")
-    url = url & subex("response_type=$#&client_id=$#&state=$#") % [
-        (if grantType == AuthorizationCode: "code" else: "token"), encodeUrl(clientId), state
-    ]
+    url = url & "response_type=" & (if grantType == AuthorizationCode: "code" else: "token") &
+      "&client_id=" & encodeUrl(clientId) & "&state=" & state
     if len(redirectUri) > 0:
-        url = url & subex("&redirect_uri=$#") % [ encodeUrl(redirectUri) ]
+        url = url & "&redirect_uri=" & encodeUrl(redirectUri)
     if len(scope) > 0:
-        url = url & subex("&scope=$#") % [ encodeUrl(scope.join(" ")) ]
+        url = url & "&scope=" & encodeUrl(scope.join(" "))
     result = url
 
 proc getAuthorizationCodeGrantUrl*(url, clientId: string,
@@ -98,27 +96,27 @@ proc accessTokenRequest(client: HttpClient | AsyncHttpClient,
     var body = "grant_type=" & $grantType
     case grantType
     of ResourceOwnerPassCreds:
-        body = body & subex("&username=$#&password=$#") % [ username, password ]
+        body = body & "&username=" & username & "&password=" & password
         if len(scope) > 0:
-            body = body & subex("&scope=$#") % [ encodeUrl(scope.join(" ")) ]
+            body = body & "&scope=" & encodeUrl(scope.join(" "))
     of AuthorizationCode:
-        body = body & subex("&code=$#") % [ encodeUrl(code) ]
+        body = body & "&code=" & encodeUrl(code)
         if len(redirectUri) > 0:
-            body = body & subex("&redirect_uri=$#") % [ encodeUrl(redirectUri) ]
+            body = body & "&redirect_uri=" & encodeUrl(redirectUri)
     of ClientCreds:
         if len(scope) > 0:
-            body = body & subex("&scope=$#") % [ encodeUrl(scope.join(" ")) ]
+            body = body & "&scope=" & encodeUrl(scope.join(" "))
     of RefreshToken:
-        body = body & subex("&refresh_token=$#") % [ encodeUrl(refreshToken) ]
+        body = body & "&refresh_token=" & encodeUrl(refreshToken)
         if len(scope) > 0:
-            body = body & subex("&scope=$#") % [ encodeUrl(scope.join(" ")) ]
+            body = body & "&scope=" & encodeUrl(scope.join(" "))
     else: discard
 
     var header: HttpHeaders
     if useBasicAuth:
         header = getBasicAuthorizationHeader(clientId, clientSecret, body)
     else:
-        body = body & "&client_id=$#&client_secret=$#" % [ encodeUrl(clientId), encodeUrl(clientSecret) ]
+        body = body & "&client_id=" & encodeUrl(clientId) & "&client_secret=" & encodeUrl(clientSecret)
         header = newHttpHeaders()
         header.setRequestHeaders(body)
 

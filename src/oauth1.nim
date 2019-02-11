@@ -26,7 +26,6 @@ import sha1
 import base64
 import uri
 import tables
-import subexes
 import algorithm
 import strtabs
 import sequtils
@@ -149,9 +148,9 @@ proc getSignatureBaseString(httpMethod: HttpMethod, url, body: string,
 
     let parsed = parseUri(url)
     if parsed.port == "":
-        url = subex("$#://$#$#") % [parsed.scheme, parsed.hostname, parsed.path]
+        url = parsed.scheme & "://" & parsed.hostname & parsed.path
     else:
-        url = subex("$#://$#:$#$#") % [parsed.scheme, parsed.hostname, parsed.port, parsed.path]
+        url = parsed.scheme & "://" & parsed.hostname & ":" & parsed.port & parsed.path
     let queries = parsed.query
 
     for r in queries.parseQuery():
@@ -162,7 +161,7 @@ proc getSignatureBaseString(httpMethod: HttpMethod, url, body: string,
     let param = parameterNormarization(requests)
     result = $httpMethod & "&" & percentEncode(url) & "&" & percentEncode(param)
 
-proc getSignatureKey(consumerKey: string, token: string): string = 
+proc getSignatureKey(consumerKey: string, token: string): string =
     ## Generate a signature key.
     result = percentEncode(consumerKey) & "&" & percentEncode(token)
 
@@ -181,24 +180,20 @@ proc getOAuth1RequestHeader*(params: OAuth1Parameters, extraHeaders: HttpHeaders
     result["Content-Type"] = "application/x-www-form-urlencoded"
     var oauth: string
     if len(params.realm) > 0:
-        oauth = subex("OAuth realm=\"$#\", ") % [ params.realm ]
+        oauth = "OAuth realm=\"" & params.realm & "\", "
     else:
         oauth = "OAuth "
-    oauth = oauth & subex("oauth_consumer_key=\"$#\", oauth_signature_method=\"$#\", oauth_timestamp=\"$#\", oauth_nonce=\"$#\", oauth_signature=\"$#\"") % [
-        params.consumerKey,
-        params.signatureMethod,
-        params.timestamp,
-        params.nonce,
-        params.signature
-    ]
+    oauth = oauth & "oauth_consumer_key=\"" & params.consumerKey & "\", oauth_signature_method=\"" &
+      params.signatureMethod & "\", oauth_timestamp=\"" & params.timestamp & "\", oauth_nonce=\"" &
+      params.nonce & "\", oauth_signature=\"" & params.signature & "\""
     if len(params.token) > 0:
-        oauth = oauth & subex(", oauth_token=\"$#\"") % [ params.token ]
+        oauth = oauth & ", oauth_token=\"" & params.token & "\""
     if len(params.callback) > 0:
-        oauth = oauth & subex(", oauth_callback=\"$#\"") % [ percentEncode(params.callback) ]
+        oauth = oauth & ", oauth_callback=\"" & percentEncode(params.callback) & "\""
     if len(params.verifier) > 0:
-        oauth = oauth & subex(", oauth_verifier=\"$#\"") % [ params.verifier ]
+        oauth = oauth & ", oauth_verifier=\"" & params.verifier & "\""
     if params.isIncludeVersionToHeader:
-        oauth = oauth & subex(", oauth_version=\"$#\"") % [ version ]
+        oauth = oauth & ", oauth_version=\"" & version & "\""
     result["Authorization"] = oauth
     if extraHeaders != nil:
       for k, v in extraHeaders.table:
