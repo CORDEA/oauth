@@ -130,7 +130,7 @@ proc getAuthorizationCodeAccessToken*(client: HttpClient | AsyncHttpClient,
         AuthorizationCode, useBasicAuth, code, redirectUri)
 
 # ref. https://github.com/nim-lang/Nim/blob/master/lib/pure/asynchttpserver.nim#L154
-proc getCallbackParamters(port: Port, html: string): Future[Uri] {.async.} =
+proc getCallbackParamters(port: Port, html: string): Future[Uri] {.async, deprecated.} =
     let socket = newAsyncSocket()
     socket.bindAddr(port)
     socket.listen()
@@ -184,7 +184,7 @@ proc parseResponseBody(body: string): StringTableRef =
 proc authorizationCodeGrant*(client: HttpClient | AsyncHttpClient,
     authorizeUrl, accessTokenRequestUrl, clientId, clientSecret: string,
     html: string = "", scope: seq[string] = @[],
-    port: int = 8080): Future[Response | AsyncResponse] {.multisync.} =
+    port: int = 8080): Future[Response | AsyncResponse] {.multisync, deprecated.} =
     ## Send a request for "Authorization Code Grant" type.
     ## | This method, outputs a URL for the authorization request at first.
     ## | Then, wait for the callback at "http://localhost:${port}".
@@ -204,7 +204,7 @@ proc authorizationCodeGrant*(client: HttpClient | AsyncHttpClient,
         clientId, clientSecret, redirectUri)
 
 proc implicitGrant*(url, clientId: string, html: string = "",
-    scope: openarray[string] = [], port: int = 8080): string =
+    scope: openarray[string] = [], port: int = 8080): string {.deprecated.} =
     ## Send a request for "Implicit Grant" type.
     ## | This method, outputs a URL for the authorization request at first.
     ## | Then, wait for the callback at "http://localhost:${port}".
