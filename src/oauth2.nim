@@ -39,6 +39,14 @@ type
         ClientCreds = "client_credentials",
         RefreshToken = "refresh_token"
 
+    AuthorizationCodeGrantAuthorizationResponse* = ref object
+        code*, state*: string
+
+    AuthorizationError* = object of Exception
+        error*, errorDescription*, errorUri*, state*: string
+
+    RedirectUriParseError* = object of Exception
+
 proc setRequestHeaders(headers: HttpHeaders, body: string) =
     headers["Content-Type"] = "application/x-www-form-urlencoded"
     headers["Content-Length"] = $len(body)
@@ -167,6 +175,7 @@ proc getCallbackParamters(port: Port, html: string): Future[Uri] {.async, deprec
     result = parseUri url
 
 proc generateState*(): string =
+    ## Generate a state.
     var r = 0
     result = ""
     randomize()
@@ -180,6 +189,28 @@ proc parseRedirectUri(body: string): StringTableRef =
     for response in responses:
         let fd = response.find("=")
         result[response[0..fd-1]] = response[fd+1..len(response)-1]
+
+proc parseAuthorizationCodeGrantRedirectUri*(uri: Uri): AuthorizationCodeGrantAuthorizationResponse =
+    ## Parse an authorization response of "Authorization Code Grant" added to redirect uri.
+    let
+        query = uri.query
+        parsed = parseRedirectUri(query)
+    if parsed.hasKey("code"):
+        return AuthorizationCodeGrantAuthorizationResponse(code: parsed["code"], state: parsed["state"])
+    if parsed.hasKey("error"):
+        var error: ref AuthorizationError
+        new(error)
+        error.error = parsed["error"]
+        if parsed.hasKey("error_description"):
+            error.errorDescription = decodeUrl(parsed["error_description"])
+        if parsed.hasKey("error_uri"):
+            error.errorUri = decodeUrl(parsed["error_uri"])
+        error.state = parsed["state"]
+        raise error
+    raise newException(RedirectUriParseError, "Failed to parse a redirect uri.")
+
+proc parseAuthorizationCodeGrantRedirectUri*(uri: string): AuthorizationCodeGrantAuthorizationResponse =
+    uri.parseUri().parseAuthorizationCodeGrantRedirectUri()
 
 proc authorizationCodeGrant*(client: HttpClient | AsyncHttpClient,
     authorizeUrl, accessTokenRequestUrl, clientId, clientSecret: string,
@@ -278,10 +309,6 @@ when defined(testing):
     assert src["oauth_token"] == "Z6eEdO8MOmk394WozF5oKyuAv855l4Mlqo7hhlSLik"
     assert src["oauth_token_secret"] == "Kd75W4OQfb2oJTV0vzGzeXftVAwgMnEK9MumzYcM"
     assert src["oauth_callback_confirmed"] == "true"
-
-    # generateState test
-    echo generateState()
-    assert len(generateState()) == 5
 
     # setRequestHeaders test
     let header = newHttpHeaders()
