@@ -174,7 +174,7 @@ proc generateState*(): string =
         r = rand(26)
         result = result & chr(97 + r)
 
-proc parseResponseBody(body: string): StringTableRef =
+proc parseRedirectUri(body: string): StringTableRef =
     let responses = body.split("&")
     result = newStringTable(modeCaseInsensitive)
     for response in responses:
@@ -198,7 +198,7 @@ proc authorizationCodeGrant*(client: HttpClient | AsyncHttpClient,
     echo authorizeUrl
     let
         uri = waitFor getCallbackParamters(Port(port), html)
-        params = parseResponseBody(uri.query)
+        params = parseRedirectUri(uri.query)
     assert params["state"] == state
     result = await client.getAuthorizationCodeAccessToken(accessTokenRequestUrl, params["code"],
         clientId, clientSecret, redirectUri)
@@ -218,7 +218,7 @@ proc implicitGrant*(url, clientId: string, html: string = "",
     let
         uri = waitFor getCallbackParamters(Port(port), html)
         query = uri.query
-        params = parseResponseBody(query)
+        params = parseRedirectUri(query)
     assert params["state"] == state
     result = query
 
@@ -258,23 +258,23 @@ proc bearerRequest*(client: HttpClient | AsyncHttpClient,
     result = await client.request(url, httpMethod = httpMethod, headers = header, body = body)
 
 when defined(testing):
-    # parseResponseBody test
+    # parseRedirectUri test
     var
         original = "oauth_token=hh5s93j4hdidpola&oauth_token_secret=hdhd0244k9j7ao03&oauth_callback_confirmed=true"
-        src = parseResponseBody(original)
+        src = parseRedirectUri(original)
     assert src["oauth_token"] == "hh5s93j4hdidpola"
     assert src["oauth_token_secret"] == "hdhd0244k9j7ao03"
     assert src["oauth_callback_confirmed"] == "true"
 
     original = "oauth_token=6253282-eWudHldSbIaelX7swmsiHImEL4KinwaGloHANdrY&oauth_token_secret=2EEfA6BG3ly3sR3RjE0IBSnlQu4ZrUzPiYKmrkVU&user_id=6253282&screen_name=twitterapi"
-    src = parseResponseBody(original)
+    src = parseRedirectUri(original)
     assert src["oauth_token"] == "6253282-eWudHldSbIaelX7swmsiHImEL4KinwaGloHANdrY"
     assert src["oauth_token_secret"] == "2EEfA6BG3ly3sR3RjE0IBSnlQu4ZrUzPiYKmrkVU"
     assert src["user_id"] == "6253282"
     assert src["screen_name"] == "twitterapi"
 
     original = "oauth_token=Z6eEdO8MOmk394WozF5oKyuAv855l4Mlqo7hhlSLik&oauth_token_secret=Kd75W4OQfb2oJTV0vzGzeXftVAwgMnEK9MumzYcM&oauth_callback_confirmed=true"
-    src = parseResponseBody(original)
+    src = parseRedirectUri(original)
     assert src["oauth_token"] == "Z6eEdO8MOmk394WozF5oKyuAv855l4Mlqo7hhlSLik"
     assert src["oauth_token_secret"] == "Kd75W4OQfb2oJTV0vzGzeXftVAwgMnEK9MumzYcM"
     assert src["oauth_callback_confirmed"] == "true"
