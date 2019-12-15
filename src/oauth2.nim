@@ -166,7 +166,7 @@ proc getCallbackParamters(port: Port, html: string): Future[Uri] {.async, deprec
             break
     result = parseUri url
 
-proc createState(): string =
+proc generateState*(): string =
     var r = 0
     result = ""
     randomize()
@@ -191,7 +191,7 @@ proc authorizationCodeGrant*(client: HttpClient | AsyncHttpClient,
     ## | When receiving the callback, check the state, and request an access token to the server.
     ## | Returns the request result of the access token.
     let
-        state = createState()
+        state = generateState()
         redirectUri = "http://localhost:" & $port
         authorizeUrl = getAuthorizationCodeGrantUrl(authorizeUrl, clientId, redirectUri, state, scope)
 
@@ -210,7 +210,7 @@ proc implicitGrant*(url, clientId: string, html: string = "",
     ## | Then, wait for the callback at "http://localhost:${port}".
     ## | When receiving the callback, check the state, returns the Uri.query as a result.
     let
-        state = createState()
+        state = generateState()
         redirectUri = "http://localhost:" & $port
         url = getImplicitGrantUrl(url, clientId, redirectUri, state, scope)
 
@@ -279,8 +279,9 @@ when defined(testing):
     assert src["oauth_token_secret"] == "Kd75W4OQfb2oJTV0vzGzeXftVAwgMnEK9MumzYcM"
     assert src["oauth_callback_confirmed"] == "true"
 
-    # createState test
-    assert len(createState()) == 5
+    # generateState test
+    echo generateState()
+    assert len(generateState()) == 5
 
     # setRequestHeaders test
     let header = newHttpHeaders()
