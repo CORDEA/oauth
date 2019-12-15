@@ -171,7 +171,7 @@ proc generateState*(): string =
     result = ""
     randomize()
     for i in 0..4:
-        r = rand(26)
+        r = rand(25)
         result = result & chr(97 + r)
 
 proc parseRedirectUri(body: string): StringTableRef =
