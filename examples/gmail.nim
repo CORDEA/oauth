@@ -22,8 +22,7 @@ import json
 const
     authorizeUrl = "https://accounts.google.com/o/oauth2/v2/auth"
     accessTokenUrl = "https://accounts.google.com/o/oauth2/token"
-
-let html = "resources/index.html".readFile()
+    redirectUri = "http://localhost:8080"
 
 echo "Please enter the client id."
 let clientId = readLine(stdin)
@@ -33,19 +32,49 @@ let clientSecret = readLine(stdin)
 echo "Please go to this url."
 let
     client = newHttpClient()
-    response = client.authorizationCodeGrant(authorizeUrl, accessTokenUrl,
-        clientId, clientSecret, html,
-        scope = @["https://www.googleapis.com/auth/gmail.readonly"])
+    state = generateState()
+    grantUrl = getAuthorizationCodeGrantUrl(
+      authorizeUrl,
+      clientId,
+      redirectUri,
+      state,
+      @["https://www.googleapis.com/auth/gmail.readonly"]
+    )
+
+echo "Please go to this url."
+echo grantUrl
+# Receives redirect url. You can also handle directly from server that was launched.
+echo "Please enter the received redirect url."
+let receivedUri = readLine(stdin)
+var grantResponse: AuthorizationCodeGrantAuthorizationResponse
+
+try:
+  grantResponse = receivedUri.parseAuthorizationCodeGrantRedirectUri()
+except AuthorizationError as error:
+  echo error.error
+
+assert state == grantResponse.state
+
+let
+  response = client.getAuthorizationCodeAccessToken(
+    accessTokenUrl,
+    grantResponse.code,
+    clientId,
+    clientSecret,
+    redirectUri
+  )
 
 echo "Please enter your email address."
 let
     address = readLine(stdin)
-    url = "https://www.googleapis.com/gmail/v1/users/$#/messages?maxResults=5" % [ address ]
     obj = parseJson(response.body)
     accessToken = obj["access_token"].str
     tokenType = obj["token_type"].str
     refreshToken = obj["refresh_token"].str
 
 if tokenType == "Bearer":
-    let r = client.bearerRequest(url, accessToken)
-    echo r.body
+  let r = client.bearerRequest(
+      "https://www.googleapis.com/gmail/v1/users/$#/messages?maxResults=5" % [ address ],
+      accessToken
+    )
+  echo r.body
