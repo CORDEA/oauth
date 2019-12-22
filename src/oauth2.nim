@@ -138,7 +138,7 @@ proc getAuthorizationCodeAccessToken*(client: HttpClient | AsyncHttpClient,
         AuthorizationCode, useBasicAuth, code, redirectUri)
 
 # ref. https://github.com/nim-lang/Nim/blob/master/lib/pure/asynchttpserver.nim#L154
-proc getCallbackParamters(port: Port, html: string): Future[Uri] {.async, deprecated.} =
+proc getCallbackParamters(port: Port, html: string): Future[Uri] {.async.} =
     let socket = newAsyncSocket()
     socket.bindAddr(port)
     socket.listen()
