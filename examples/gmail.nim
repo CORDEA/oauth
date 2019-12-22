@@ -46,10 +46,10 @@ echo grantUrl
 # Receives redirect url. You can also handle directly from server that was launched.
 echo "Please enter the received redirect url."
 let receivedUri = readLine(stdin)
-var grantResponse: AuthorizationCodeGrantAuthorizationResponse
+var grantResponse: AuthorizationResponse
 
 try:
-  grantResponse = receivedUri.parseAuthorizationCodeGrantRedirectUri()
+  grantResponse = receivedUri.parseAuthorizationResponse()
 except AuthorizationError as error:
   echo error.error
 

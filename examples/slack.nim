@@ -41,7 +41,7 @@ echo "Please enter the received redirect url."
 # ex. https://example.com?code=xxxxxxxxxx&state=xxxxx
 let
   receivedUri = readLine(stdin)
-  grantResponse = receivedUri.parseAuthorizationCodeGrantRedirectUri()
+  grantResponse = receivedUri.parseAuthorizationResponse()
 
 assert state == grantResponse.state
 

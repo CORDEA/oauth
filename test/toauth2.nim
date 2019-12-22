@@ -48,7 +48,7 @@ suite "OAuth2 test":
     test "parse redirect uri":
         let
             uri = "https://client.example.com/cb?code=SplxlOBeZQQYbYS6WxSbIA&state=xyz"
-            response = uri.parseAuthorizationCodeGrantRedirectUri()
+            response = uri.parseAuthorizationResponse()
         assert response.code == "SplxlOBeZQQYbYS6WxSbIA"
         assert response.state == "xyz"
 
@@ -56,7 +56,7 @@ suite "OAuth2 test":
         let
             uri = "https://client.example.com/cb?error=access_denied&state=xyz"
         try:
-            discard uri.parseAuthorizationCodeGrantRedirectUri()
+            discard uri.parseAuthorizationResponse()
         except AuthorizationError as error:
             assert error.error == "access_denied"
             assert error.state == "xyz"
@@ -65,7 +65,7 @@ suite "OAuth2 test":
         let
             uri = "https://client.example.com/cb?error=access_denied&error_description=error%20description&error_uri=http%3A%2F%2Fexample.com&state=xyz"
         try:
-            discard uri.parseAuthorizationCodeGrantRedirectUri()
+            discard uri.parseAuthorizationResponse()
         except AuthorizationError as error:
             assert error.error == "access_denied"
             assert error.errorDescription == "error description"

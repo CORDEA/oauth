@@ -39,7 +39,7 @@ type
         ClientCreds = "client_credentials",
         RefreshToken = "refresh_token"
 
-    AuthorizationCodeGrantAuthorizationResponse* = ref object
+    AuthorizationResponse* = ref object
         code*, state*: string
 
     AuthorizationError* = object of Exception
@@ -190,13 +190,13 @@ proc parseRedirectUri(body: string): StringTableRef =
         let fd = response.find("=")
         result[response[0..fd-1]] = response[fd+1..len(response)-1]
 
-proc parseAuthorizationCodeGrantRedirectUri*(uri: Uri): AuthorizationCodeGrantAuthorizationResponse =
+proc parseAuthorizationResponse*(uri: Uri): AuthorizationResponse =
     ## Parse an authorization response of "Authorization Code Grant" added to redirect uri.
     let
         query = uri.query
         parsed = parseRedirectUri(query)
     if parsed.hasKey("code"):
-        return AuthorizationCodeGrantAuthorizationResponse(code: parsed["code"], state: parsed["state"])
+        return AuthorizationResponse(code: parsed["code"], state: parsed["state"])
     if parsed.hasKey("error"):
         var error: ref AuthorizationError
         new(error)
@@ -209,8 +209,8 @@ proc parseAuthorizationCodeGrantRedirectUri*(uri: Uri): AuthorizationCodeGrantAu
         raise error
     raise newException(RedirectUriParseError, "Failed to parse a redirect uri.")
 
-proc parseAuthorizationCodeGrantRedirectUri*(uri: string): AuthorizationCodeGrantAuthorizationResponse =
-    uri.parseUri().parseAuthorizationCodeGrantRedirectUri()
+proc parseAuthorizationResponse*(uri: string): AuthorizationResponse =
+    uri.parseUri().parseAuthorizationResponse()
 
 proc authorizationCodeGrant*(client: HttpClient | AsyncHttpClient,
     authorizeUrl, accessTokenRequestUrl, clientId, clientSecret: string,
