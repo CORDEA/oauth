@@ -99,6 +99,23 @@ input#searchInput {
   width: 80%;
 }
 
+/*
+ * Some custom formatting for input forms.
+ * This also fixes input form colors on Firefox with a dark system theme on Linux.
+ */
+input {
+  -moz-appearance: none;
+  color: #333;
+  background-color: #f8f8f8;
+  border: 1px solid #aaa;
+  font-family: "Lato", "Helvetica Neue", "HelveticaNeue", Helvetica, Arial, sans-serif;
+  font-size: 0.9em;
+  padding: 6px;
+}
+input:focus {
+  border: 1px solid #1fa0eb;
+  box-shadow: 0 0 2px #1fa0eb;
+}
 
 /* Docgen styles */
 /* Links */
@@ -345,11 +362,11 @@ dl {
 
 dt {
   margin-bottom: -0.5em;
-  margin-left: 0.5em; }
+  margin-left: 0.0em; }
 
 dd {
-  margin-left: 0.5em;
-  margin-bottom: 2.5em;
+  margin-left: 2.0em;
+  margin-bottom: 3.0em;
   margin-top: 0.5em; }
 
 
@@ -761,6 +778,10 @@ span.pragmawrap {
   display: none;
 }
 
+span.attachedType {
+  display: none;
+  visibility: hidden;
+}
 </style>
 
 <script type="text/javascript" src="dochack.js"></script>
@@ -809,7 +830,7 @@ function main() {
     title="OAuth1Parameters = ref object
   realm*, consumerKey*, nonce*, signature*, signatureMethod*, timestamp*, token*,
   callback*, verifier*: string
-  isIncludeVersionToHeader*: bool"><wbr />OAuth1Parameters<span class="attachedType" style="visibility:hidden"></span></a></li>
+  isIncludeVersionToHeader*: bool"><wbr />OAuth1Parameters<span class="attachedType"></span></a></li>
 
   </ul>
 </li>
@@ -817,50 +838,50 @@ function main() {
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#percentEncode%2Cstring"
-    title="percentEncode(str: string): string"><wbr />percent<wbr />Encode<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="percentEncode(str: string): string"><wbr />percent<wbr />Encode<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getSignature%2CHttpMethod%2Cstring%2Cstring%2COAuth1Parameters%2Cstring%2Cstring"
     title="getSignature(HttpMethod: HttpMethod; url, body: string; params: OAuth1Parameters;
-             consumerKey, token: string): string"><wbr />get<wbr />Signature<span class="attachedType" style="visibility:hidden">OAuth1Parameters</span></a></li>
+             consumerKey, token: string): string"><wbr />get<wbr />Signature<span class="attachedType">OAuth1Parameters</span></a></li>
   <li><a class="reference" href="#getOAuth1RequestHeader%2COAuth1Parameters%2CHttpHeaders"
-    title="getOAuth1RequestHeader(params: OAuth1Parameters; extraHeaders: HttpHeaders = nil): HttpHeaders"><wbr />get<wbr />OAuth1Request<wbr />Header<span class="attachedType" style="visibility:hidden">OAuth1Parameters</span></a></li>
+    title="getOAuth1RequestHeader(params: OAuth1Parameters; extraHeaders: HttpHeaders = nil): HttpHeaders"><wbr />get<wbr />OAuth1Request<wbr />Header<span class="attachedType">OAuth1Parameters</span></a></li>
   <li><a class="reference" href="#getOAuth1RequestToken%2CAsyncHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2CHttpHeaders%2Cstring%2Cstring%2Cstring"
     title="getOAuth1RequestToken(client: AsyncHttpClient;
                       url, consumerKey, consumerSecret: string; callback = &quot;oob&quot;;
                       isIncludeVersionToHeader = false; httpMethod = HttpPOST;
                       extraHeaders: HttpHeaders = nil; body = &quot;&quot;; realm: string = &quot;&quot;;
-                      nonce: string = &quot;&quot;): Future[AsyncResponse]"><wbr />get<wbr />OAuth1Request<wbr />Token<span class="attachedType" style="visibility:hidden"></span></a></li>
+                      nonce: string = &quot;&quot;): Future[AsyncResponse]"><wbr />get<wbr />OAuth1Request<wbr />Token<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getOAuth1RequestToken%2CHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2CHttpHeaders%2Cstring%2Cstring%2Cstring"
     title="getOAuth1RequestToken(client: HttpClient;
                       url, consumerKey, consumerSecret: string; callback = &quot;oob&quot;;
                       isIncludeVersionToHeader = false; httpMethod = HttpPOST;
                       extraHeaders: HttpHeaders = nil; body = &quot;&quot;; realm: string = &quot;&quot;;
-                      nonce: string = &quot;&quot;): Response"><wbr />get<wbr />OAuth1Request<wbr />Token<span class="attachedType" style="visibility:hidden"></span></a></li>
+                      nonce: string = &quot;&quot;): Response"><wbr />get<wbr />OAuth1Request<wbr />Token<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getAuthorizeUrl%2Cstring%2Cstring"
-    title="getAuthorizeUrl(url, requestToken: string): string"><wbr />get<wbr />Authorize<wbr />Url<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="getAuthorizeUrl(url, requestToken: string): string"><wbr />get<wbr />Authorize<wbr />Url<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getOAuth1AccessToken%2CAsyncHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2CHttpHeaders%2Cstring%2Cstring%2Cstring"
     title="getOAuth1AccessToken(client: AsyncHttpClient; url, consumerKey, consumerSecret,
     requestToken, requestTokenSecret, verifier: string;
                      isIncludeVersionToHeader = false; httpMethod = HttpPOST;
                      extraHeaders: HttpHeaders = nil; body = &quot;&quot;; nonce: string = &quot;&quot;;
-                     realm: string = &quot;&quot;): Future[AsyncResponse]"><wbr />get<wbr />OAuth1Access<wbr />Token<span class="attachedType" style="visibility:hidden"></span></a></li>
+                     realm: string = &quot;&quot;): Future[AsyncResponse]"><wbr />get<wbr />OAuth1Access<wbr />Token<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getOAuth1AccessToken%2CHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2CHttpHeaders%2Cstring%2Cstring%2Cstring"
     title="getOAuth1AccessToken(client: HttpClient; url, consumerKey, consumerSecret,
                                        requestToken, requestTokenSecret, verifier: string;
                      isIncludeVersionToHeader = false; httpMethod = HttpPOST;
                      extraHeaders: HttpHeaders = nil; body = &quot;&quot;; nonce: string = &quot;&quot;;
-                     realm: string = &quot;&quot;): Response"><wbr />get<wbr />OAuth1Access<wbr />Token<span class="attachedType" style="visibility:hidden"></span></a></li>
+                     realm: string = &quot;&quot;): Response"><wbr />get<wbr />OAuth1Access<wbr />Token<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#oAuth1Request%2CAsyncHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2CHttpHeaders%2Cstring%2Cstring%2Cstring"
     title="oAuth1Request(client: AsyncHttpClient;
               url, consumerKey, consumerSecret, token, tokenSecret: string;
               isIncludeVersionToHeader = false; httpMethod = HttpGET;
               extraHeaders: HttpHeaders = nil; body = &quot;&quot;; nonce: string = &quot;&quot;;
-              realm: string = &quot;&quot;): Future[AsyncResponse]"><wbr />o<wbr />Auth1Request<span class="attachedType" style="visibility:hidden"></span></a></li>
+              realm: string = &quot;&quot;): Future[AsyncResponse]"><wbr />o<wbr />Auth1Request<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#oAuth1Request%2CHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2CHttpHeaders%2Cstring%2Cstring%2Cstring"
     title="oAuth1Request(client: HttpClient;
               url, consumerKey, consumerSecret, token, tokenSecret: string;
               isIncludeVersionToHeader = false; httpMethod = HttpGET;
               extraHeaders: HttpHeaders = nil; body = &quot;&quot;; nonce: string = &quot;&quot;;
-              realm: string = &quot;&quot;): Response"><wbr />o<wbr />Auth1Request<span class="attachedType" style="visibility:hidden"></span></a></li>
+              realm: string = &quot;&quot;): Response"><wbr />o<wbr />Auth1Request<span class="attachedType"></span></a></li>
 
   </ul>
 </li>
@@ -870,6 +891,7 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
+  
   <p class="module-desc">This module supports access to resources by OAuth 1.0. signature method supports only HMAC-SHA1.<p>Please refer to <a class="reference external" href="http://oauth.net/core/1.0a">OAuth Core 1.0a</a> details.<br /></p></p>
   <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
@@ -883,6 +905,7 @@ function main() {
 <dd>
 
 
+
 </dd>
 
 </dl></div>
@@ -892,6 +915,7 @@ function main() {
 <a id="percentEncode,string"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#percentEncode%2Cstring"><span class="Identifier">percentEncode</span></a><span class="Other">(</span><span class="Identifier">str</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Escape the character by using the percent encoding.
 
 </dd>
@@ -899,6 +923,7 @@ Escape the character by using the percent encoding.
 <dt><pre><span class="Keyword">proc</span> <a href="#getSignature%2CHttpMethod%2Cstring%2Cstring%2COAuth1Parameters%2Cstring%2Cstring"><span class="Identifier">getSignature</span></a><span class="Other">(</span><span class="Identifier">HttpMethod</span><span class="Other">:</span> <span class="Identifier">HttpMethod</span><span class="Other">;</span> <span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">params</span><span class="Other">:</span> <a href="oauth1.html#OAuth1Parameters"><span class="Identifier">OAuth1Parameters</span></a><span class="Other">;</span>
                  <span class="Identifier">consumerKey</span><span class="Other">,</span> <span class="Identifier">token</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Generate a signature.
 
 </dd>
@@ -907,6 +932,7 @@ Generate a signature.
                            <span class="Identifier">extraHeaders</span><span class="Other">:</span> <span class="Identifier">HttpHeaders</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">HttpHeaders</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Generate the necessary header to a OAuth1 request.
 
 </dd>
@@ -916,9 +942,10 @@ Generate the necessary header to a OAuth1 request.
                           <span class="Identifier">callback</span> <span class="Other">=</span> <span class="StringLit">&quot;oob&quot;</span><span class="Other">;</span> <span class="Identifier">isIncludeVersionToHeader</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span>
                           <span class="Identifier">httpMethod</span> <span class="Other">=</span> <span class="Identifier">HttpPOST</span><span class="Other">;</span> <span class="Identifier">extraHeaders</span><span class="Other">:</span> <span class="Identifier">HttpHeaders</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span>
                           <span class="Identifier">body</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">realm</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">nonce</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Future</span><span class="Other">[</span>
-    <span class="Identifier">AsyncResponse</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">FutureError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">AsyncResponse</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">FutureError</span><span class="Other">]</span><span class="Other">,</span>
                     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">TimeEffect</span><span class="Other">,</span> <span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 A temporary credential requests. You will receive a request token. Not the access token.<p>If <tt class="docutils literal"><span class="pre">relam</span></tt> parameter is not empty, add the <tt class="docutils literal"><span class="pre">realm</span></tt> to the header.<br />If the <tt class="docutils literal"><span class="pre">nonce</span></tt> is empty, <tt class="docutils literal"><span class="pre">nonce</span></tt> is generated by <tt class="docutils literal"><span class="pre">createNonce</span></tt>.<br />If <tt class="docutils literal"><span class="pre">isIncludeVersionToHeader</span></tt> is <tt class="docutils literal"><span class="pre">true</span></tt>, including the <tt class="docutils literal"><span class="pre">oauth_version</span></tt> in the header.<br />If the client can not receive a <tt class="docutils literal"><span class="pre">callback</span></tt>, set &quot;oob&quot; to <tt class="docutils literal"><span class="pre">callback</span></tt>.<br /></p>
 
 </dd>
@@ -932,12 +959,14 @@ A temporary credential requests. You will receive a request token. Not the acces
     <span class="Identifier">ProtocolError</span><span class="Other">,</span> <span class="Identifier">KeyError</span><span class="Other">,</span> <span class="Identifier">Defect</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">TimeEffect</span><span class="Other">,</span> <span class="Identifier">ReadIOEffect</span><span class="Other">,</span> <span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 A temporary credential requests. You will receive a request token. Not the access token.<p>If <tt class="docutils literal"><span class="pre">relam</span></tt> parameter is not empty, add the <tt class="docutils literal"><span class="pre">realm</span></tt> to the header.<br />If the <tt class="docutils literal"><span class="pre">nonce</span></tt> is empty, <tt class="docutils literal"><span class="pre">nonce</span></tt> is generated by <tt class="docutils literal"><span class="pre">createNonce</span></tt>.<br />If <tt class="docutils literal"><span class="pre">isIncludeVersionToHeader</span></tt> is <tt class="docutils literal"><span class="pre">true</span></tt>, including the <tt class="docutils literal"><span class="pre">oauth_version</span></tt> in the header.<br />If the client can not receive a <tt class="docutils literal"><span class="pre">callback</span></tt>, set &quot;oob&quot; to <tt class="docutils literal"><span class="pre">callback</span></tt>.<br /></p>
 
 </dd>
 <a id="getAuthorizeUrl,string,string"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#getAuthorizeUrl%2Cstring%2Cstring"><span class="Identifier">getAuthorizeUrl</span></a><span class="Other">(</span><span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">requestToken</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 It returns the url for authentication. This URL may need to access by such as a browser.
 
 </dd>
@@ -947,8 +976,9 @@ It returns the url for authentication. This URL may need to access by such as a 
                          <span class="Identifier">isIncludeVersionToHeader</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">httpMethod</span> <span class="Other">=</span> <span class="Identifier">HttpPOST</span><span class="Other">;</span>
                          <span class="Identifier">extraHeaders</span><span class="Other">:</span> <span class="Identifier">HttpHeaders</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">body</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
                          <span class="Identifier">nonce</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">realm</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Future</span><span class="Other">[</span><span class="Identifier">AsyncResponse</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">FutureError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">TimeEffect</span><span class="Other">,</span> <span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">FutureError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">TimeEffect</span><span class="Other">,</span> <span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Get the access token.
 
 </dd>
@@ -962,6 +992,7 @@ Get the access token.
     <span class="Identifier">ProtocolError</span><span class="Other">,</span> <span class="Identifier">KeyError</span><span class="Other">,</span> <span class="Identifier">Defect</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">TimeEffect</span><span class="Other">,</span> <span class="Identifier">ReadIOEffect</span><span class="Other">,</span> <span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Get the access token.
 
 </dd>
@@ -971,8 +1002,9 @@ Get the access token.
                   <span class="Identifier">isIncludeVersionToHeader</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">httpMethod</span> <span class="Other">=</span> <span class="Identifier">HttpGET</span><span class="Other">;</span>
                   <span class="Identifier">extraHeaders</span><span class="Other">:</span> <span class="Identifier">HttpHeaders</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">body</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">nonce</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
                   <span class="Identifier">realm</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Future</span><span class="Other">[</span><span class="Identifier">AsyncResponse</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">FutureError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">TimeEffect</span><span class="Other">,</span> <span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">FutureError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">TimeEffect</span><span class="Other">,</span> <span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Send an authenticated request to access a protected resource.
 
 </dd>
@@ -985,6 +1017,7 @@ Send an authenticated request to access a protected resource.
     <span class="Identifier">HttpRequestError</span><span class="Other">,</span> <span class="Identifier">SslError</span><span class="Other">,</span> <span class="Identifier">OSError</span><span class="Other">,</span> <span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">TimeoutError</span><span class="Other">,</span> <span class="Identifier">ProtocolError</span><span class="Other">,</span>
     <span class="Identifier">KeyError</span><span class="Other">,</span> <span class="Identifier">Defect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">TimeEffect</span><span class="Other">,</span> <span class="Identifier">ReadIOEffect</span><span class="Other">,</span> <span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Send an authenticated request to access a protected resource.
 
 </dd>
@@ -998,7 +1031,7 @@ Send an authenticated request to access a protected resource.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-12-22 07:29:11 UTC</small>
+        <small>Made with Nim. Generated: 2020-01-11 07:32:42 UTC</small>
       </div>
     </div>
   </div>
