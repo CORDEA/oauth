@@ -34,7 +34,7 @@ let clientSecret = readLine(stdin)
 
 let
   state = generateState()
-  grantUrl = getAuthorizationCodeGrantUrl(authorizeUrl, clientId, redirectUri, state, @["channels:read"])
+  grantUrl = getAuthorizationCodeGrantUrl(authorizeUrl, clientId, redirectUri, state)
 echo "Please go to this url."
 echo grantUrl
 
