@@ -17,7 +17,6 @@
 import unittest
 import ../src/oauth1
 import httpclient
-import strtabs
 
 proc mockOAuth1Parameters(
         realm = "_realm", token = "_token",

@@ -27,7 +27,6 @@ import base64
 import uri
 import tables
 import algorithm
-import strtabs
 import sequtils
 import asyncdispatch
 import httpclient
