@@ -26,9 +26,7 @@ import sha1
 import base64
 import uri
 import tables
-import subexes
 import algorithm
-import strtabs
 import sequtils
 import asyncdispatch
 import httpclient
@@ -111,11 +109,11 @@ proc toArray(params: OAuth1Parameters): seq[array[2, string]] =
     result.add(["oauth_timestamp", $params.timestamp])
     if params.isIncludeVersionToHeader:
         result.add(["oauth_version", version])
-    if params.callback != nil:
+    if len(params.callback) > 0:
         result.add(["oauth_callback", params.callback])
-    if params.token != nil:
+    if len(params.token) > 0:
         result.add(["oauth_token", params.token])
-    if params.verifier != nil:
+    if len(params.verifier) > 0:
         result.add(["oauth_verifier", params.verifier])
 
 proc parameterNormarization(parameters: seq[array[2, string]]): string =
@@ -149,9 +147,9 @@ proc getSignatureBaseString(httpMethod: HttpMethod, url, body: string,
 
     let parsed = parseUri(url)
     if parsed.port == "":
-        url = subex("$#://$#$#") % [parsed.scheme, parsed.hostname, parsed.path]
+        url = parsed.scheme & "://" & parsed.hostname & parsed.path
     else:
-        url = subex("$#://$#:$#$#") % [parsed.scheme, parsed.hostname, parsed.port, parsed.path]
+        url = parsed.scheme & "://" & parsed.hostname & ":" & parsed.port & parsed.path
     let queries = parsed.query
 
     for r in queries.parseQuery():
@@ -162,7 +160,7 @@ proc getSignatureBaseString(httpMethod: HttpMethod, url, body: string,
     let param = parameterNormarization(requests)
     result = $httpMethod & "&" & percentEncode(url) & "&" & percentEncode(param)
 
-proc getSignatureKey(consumerKey: string, token: string): string = 
+proc getSignatureKey(consumerKey: string, token: string): string =
     ## Generate a signature key.
     result = percentEncode(consumerKey) & "&" & percentEncode(token)
 
@@ -180,25 +178,21 @@ proc getOAuth1RequestHeader*(params: OAuth1Parameters, extraHeaders: HttpHeaders
     result = newHttpHeaders()
     result["Content-Type"] = "application/x-www-form-urlencoded"
     var oauth: string
-    if params.realm != nil:
-        oauth = subex("OAuth realm=\"$#\", ") % [ params.realm ]
+    if len(params.realm) > 0:
+        oauth = "OAuth realm=\"" & params.realm & "\", "
     else:
         oauth = "OAuth "
-    oauth = oauth & subex("oauth_consumer_key=\"$#\", oauth_signature_method=\"$#\", oauth_timestamp=\"$#\", oauth_nonce=\"$#\", oauth_signature=\"$#\"") % [
-        params.consumerKey,
-        params.signatureMethod,
-        params.timestamp,
-        params.nonce,
-        params.signature
-    ]
-    if params.token != nil:
-        oauth = oauth & subex(", oauth_token=\"$#\"") % [ params.token ]
-    if params.callback != nil:
-        oauth = oauth & subex(", oauth_callback=\"$#\"") % [ percentEncode(params.callback) ]
-    if params.verifier != nil:
-        oauth = oauth & subex(", oauth_verifier=\"$#\"") % [ params.verifier ]
+    oauth = oauth & "oauth_consumer_key=\"" & params.consumerKey & "\", oauth_signature_method=\"" &
+      params.signatureMethod & "\", oauth_timestamp=\"" & params.timestamp & "\", oauth_nonce=\"" &
+      params.nonce & "\", oauth_signature=\"" & params.signature & "\""
+    if len(params.token) > 0:
+        oauth = oauth & ", oauth_token=\"" & params.token & "\""
+    if len(params.callback) > 0:
+        oauth = oauth & ", oauth_callback=\"" & percentEncode(params.callback) & "\""
+    if len(params.verifier) > 0:
+        oauth = oauth & ", oauth_verifier=\"" & params.verifier & "\""
     if params.isIncludeVersionToHeader:
-        oauth = oauth & subex(", oauth_version=\"$#\"") % [ version ]
+        oauth = oauth & ", oauth_version=\"" & version & "\""
     result["Authorization"] = oauth
     if extraHeaders != nil:
       for k, v in extraHeaders.table:
@@ -206,13 +200,13 @@ proc getOAuth1RequestHeader*(params: OAuth1Parameters, extraHeaders: HttpHeaders
 
 proc oAuth1Request(client: HttpClient | AsyncHttpClient,
     url, consumerKey, consumerSecret: string,
-    callback, token, verifier: string = nil, tokenSecret = "",
+    callback, token, verifier: string = "", tokenSecret = "",
     isIncludeVersionToHeader = false, httpMethod = HttpGET,
     extraHeaders: HttpHeaders = nil, body = "",
-    nonce: string = nil, realm: string = nil): Future[Response | AsyncResponse] {.multisync.} =
+    nonce: string = "", realm: string = ""): Future[Response | AsyncResponse] {.multisync.} =
     let
         timestamp = int(round(epochTime()))
-        nonce = if nonce == nil: createNonce() else: nonce
+        nonce = if len(nonce) == 0: createNonce() else: nonce
         params = OAuth1Parameters(
             realm: realm,
             consumerKey: consumerKey,
@@ -234,16 +228,16 @@ proc getOAuth1RequestToken*(client: HttpClient | AsyncHttpClient,
     url, consumerKey, consumerSecret: string,
     callback = "oob", isIncludeVersionToHeader = false,
     httpMethod = HttpPOST, extraHeaders: HttpHeaders = nil, body = "",
-    realm: string = nil, nonce: string = nil): Future[Response | AsyncResponse] {.multisync.} =
+    realm: string = "", nonce: string = ""): Future[Response | AsyncResponse] {.multisync.} =
     ## A temporary credential requests.
     ## You will receive a request token. Not the access token.
     ##
-    ## | If ``relam`` parameter is not ``nil``, add the ``realm`` to the header.
-    ## | If the ``nonce`` is nil, ``nonce`` is generated by ``createNonce``.
+    ## | If ``relam`` parameter is not empty, add the ``realm`` to the header.
+    ## | If the ``nonce`` is empty, ``nonce`` is generated by ``createNonce``.
     ## | If ``isIncludeVersionToHeader`` is ``true``, including the ``oauth_version`` in the header.
     ## | If the client can not receive a ``callback``, set "oob" to ``callback``.
     result = await client.oAuth1Request(url, consumerKey, consumerSecret,
-        callback, nil, nil, "", isIncludeVersionToHeader,
+        callback, "", "", "", isIncludeVersionToHeader,
         httpMethod, extraHeaders, body, realm, nonce)
 
 proc getAuthorizeUrl*(url, requestToken: string): string =
@@ -256,20 +250,20 @@ proc getOAuth1AccessToken*(client: HttpClient | AsyncHttpClient,
     requestToken, requestTokenSecret, verifier: string,
     isIncludeVersionToHeader = false, httpMethod = HttpPOST,
     extraHeaders: HttpHeaders = nil, body = "",
-    nonce: string = nil, realm: string = nil): Future[Response | AsyncResponse] {.multisync.} =
+    nonce: string = "", realm: string = ""): Future[Response | AsyncResponse] {.multisync.} =
     ## Get the access token.
     result = await client.oAuth1Request(url, consumerKey, consumerSecret,
-        nil, requestToken, verifier, requestTokenSecret,
+        "", requestToken, verifier, requestTokenSecret,
         isIncludeVersionToHeader, httpMethod, extraHeaders, body, nonce, realm)
 
 proc oAuth1Request*(client: HttpClient | AsyncHttpClient,
     url, consumerKey, consumerSecret, token, tokenSecret: string,
     isIncludeVersionToHeader = false, httpMethod = HttpGET,
     extraHeaders: HttpHeaders = nil, body = "",
-    nonce: string = nil, realm: string = nil): Future[Response | AsyncResponse] {.multisync.} =
+    nonce: string = "", realm: string = ""): Future[Response | AsyncResponse] {.multisync.} =
     ## Send an authenticated request to access a protected resource.
     result = await client.oAuth1Request(url, consumerKey, consumerSecret,
-        nil, token, nil, tokenSecret,
+        "", token, "", tokenSecret,
         isIncludeVersionToHeader, httpMethod, extraHeaders, body, nonce, realm)
 
 when defined(testing):

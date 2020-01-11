@@ -1,4 +1,4 @@
-# Copyright 2016 Yoshihiro Tanaka
+# Copyright 2019 Yoshihiro Tanaka
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -12,18 +12,20 @@
 # limitations under the License.
 
 # Author: Yoshihiro Tanaka <contact@cordea.jp>
-# date  :2016-03-08
+# date  : 2019-12-22
 
 import uri
 import json
 import oauth2
+import sequtils
+import strutils
 import httpclient
 
 const
-    authorizeUrl = "https://slack.com/oauth/authorize"
-    accessTokenUrl = "https://slack.com/api/oauth.access"
+    authorizeUrl = "https://github.com/login/oauth/authorize"
+    accessTokenUrl = "https://github.com/login/oauth/access_token"
     redirectUri = "http://localhost:8080"
-    url = "https://slack.com/api/channels.list"
+    url = "https://api.github.com/user"
 
 echo "Please enter the client id."
 let clientId = readLine(stdin)
@@ -32,13 +34,12 @@ let clientSecret = readLine(stdin)
 
 let
   state = generateState()
-  grantUrl = getAuthorizationCodeGrantUrl(authorizeUrl, clientId, redirectUri, state, @["channels:read"])
+  grantUrl = getAuthorizationCodeGrantUrl(authorizeUrl, clientId, redirectUri, state)
 echo "Please go to this url."
 echo grantUrl
 
 # Receives redirect url. You can also handle directly from server that was launched.
 echo "Please enter the received redirect url."
-# ex. https://example.com?code=xxxxxxxxxx&state=xxxxx
 let
   receivedUri = readLine(stdin)
   grantResponse = receivedUri.parseAuthorizationResponse()
@@ -54,7 +55,13 @@ let
     clientSecret,
     redirectUri
   )
-  obj = parseJson(response.body)
-  accessToken = obj["access_token"].str
-  r = client.getContent(url & "?token=" & accessToken)
-echo r
+  accessToken = response.body
+    .split("&")
+    .mapIt(it.split("="))
+    .filterIt(it[0] == "access_token")[0][1]
+  r = client.bearerRequest(
+    url,
+    accessToken
+  )
+
+echo r.body

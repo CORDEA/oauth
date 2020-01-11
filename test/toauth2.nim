@@ -41,3 +41,33 @@ suite "OAuth2 test":
     test "get bearer request header":
         let header = getBearerRequestHeader("Aladdin")
         assert header["Authorization"] == "Bearer Aladdin"
+
+    test "generate state":
+        assert len(generateState()) == 5
+
+    test "parse redirect uri":
+        let
+            uri = "https://client.example.com/cb?code=SplxlOBeZQQYbYS6WxSbIA&state=xyz"
+            response = uri.parseAuthorizationResponse()
+        assert response.code == "SplxlOBeZQQYbYS6WxSbIA"
+        assert response.state == "xyz"
+
+    test "parse redirect uri 2":
+        let
+            uri = "https://client.example.com/cb?error=access_denied&state=xyz"
+        try:
+            discard uri.parseAuthorizationResponse()
+        except AuthorizationError as error:
+            assert error.error == "access_denied"
+            assert error.state == "xyz"
+
+    test "parse redirect uri 3":
+        let
+            uri = "https://client.example.com/cb?error=access_denied&error_description=error%20description&error_uri=http%3A%2F%2Fexample.com&state=xyz"
+        try:
+            discard uri.parseAuthorizationResponse()
+        except AuthorizationError as error:
+            assert error.error == "access_denied"
+            assert error.errorDescription == "error description"
+            assert error.errorUri == "http://example.com"
+            assert error.state == "xyz"

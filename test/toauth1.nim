@@ -17,7 +17,6 @@
 import unittest
 import ../src/oauth1
 import httpclient
-import strtabs
 
 proc mockOAuth1Parameters(
         realm = "_realm", token = "_token",
@@ -102,20 +101,20 @@ suite "OAuth1 test":
             check(header["Content-Type"] == "application/x-www-form-urlencoded")
             check(header["Authorization"] == "OAuth realm=\"_realm\", oauth_consumer_key=\"_consumerKey\", oauth_signature_method=\"_signatureMethod\", oauth_timestamp=\"_timestamp\", oauth_nonce=\"_nonce\", oauth_signature=\"_signature\", oauth_token=\"_token\", oauth_callback=\"_callback\", oauth_verifier=\"_verifier\", oauth_version=\"1.0\"")
 
-        test "realm should be erased from header when realm is nil":
-            let header = getOAuth1RequestHeader(mockOAuth1Parameters(realm = nil))
+        test "realm should be erased from header when realm is empty":
+            let header = getOAuth1RequestHeader(mockOAuth1Parameters(realm = ""))
             check(header["Authorization"] == "OAuth oauth_consumer_key=\"_consumerKey\", oauth_signature_method=\"_signatureMethod\", oauth_timestamp=\"_timestamp\", oauth_nonce=\"_nonce\", oauth_signature=\"_signature\", oauth_token=\"_token\", oauth_callback=\"_callback\", oauth_verifier=\"_verifier\", oauth_version=\"1.0\"")
 
-        test "oauth_token should be erased from header when token is nil":
-            let header = getOAuth1RequestHeader(mockOAuth1Parameters(token = nil))
+        test "oauth_token should be erased from header when token is empty":
+            let header = getOAuth1RequestHeader(mockOAuth1Parameters(token = ""))
             check(header["Authorization"] == "OAuth realm=\"_realm\", oauth_consumer_key=\"_consumerKey\", oauth_signature_method=\"_signatureMethod\", oauth_timestamp=\"_timestamp\", oauth_nonce=\"_nonce\", oauth_signature=\"_signature\", oauth_callback=\"_callback\", oauth_verifier=\"_verifier\", oauth_version=\"1.0\"")
 
-        test "oauth_callback should be erased from header when callback is nil":
-            let header = getOAuth1RequestHeader(mockOAuth1Parameters(callback = nil))
+        test "oauth_callback should be erased from header when callback is empty":
+            let header = getOAuth1RequestHeader(mockOAuth1Parameters(callback = ""))
             check(header["Authorization"] == "OAuth realm=\"_realm\", oauth_consumer_key=\"_consumerKey\", oauth_signature_method=\"_signatureMethod\", oauth_timestamp=\"_timestamp\", oauth_nonce=\"_nonce\", oauth_signature=\"_signature\", oauth_token=\"_token\", oauth_verifier=\"_verifier\", oauth_version=\"1.0\"")
 
-        test "oauth_token should be erased from header when token is nil":
-            let header = getOAuth1RequestHeader(mockOAuth1Parameters(verifier = nil))
+        test "oauth_token should be erased from header when token is empty":
+            let header = getOAuth1RequestHeader(mockOAuth1Parameters(verifier = ""))
             check(header["Authorization"] == "OAuth realm=\"_realm\", oauth_consumer_key=\"_consumerKey\", oauth_signature_method=\"_signatureMethod\", oauth_timestamp=\"_timestamp\", oauth_nonce=\"_nonce\", oauth_signature=\"_signature\", oauth_token=\"_token\", oauth_callback=\"_callback\", oauth_version=\"1.0\"")
 
         test "oauth_version should be erased from header when isIncludeVersionToHeader is false":

@@ -99,6 +99,23 @@ input#searchInput {
   width: 80%;
 }
 
+/*
+ * Some custom formatting for input forms.
+ * This also fixes input form colors on Firefox with a dark system theme on Linux.
+ */
+input {
+  -moz-appearance: none;
+  color: #333;
+  background-color: #f8f8f8;
+  border: 1px solid #aaa;
+  font-family: "Lato", "Helvetica Neue", "HelveticaNeue", Helvetica, Arial, sans-serif;
+  font-size: 0.9em;
+  padding: 6px;
+}
+input:focus {
+  border: 1px solid #1fa0eb;
+  box-shadow: 0 0 2px #1fa0eb;
+}
 
 /* Docgen styles */
 /* Links */
@@ -345,11 +362,11 @@ dl {
 
 dt {
   margin-bottom: -0.5em;
-  margin-left: 0.5em; }
+  margin-left: 0.0em; }
 
 dd {
-  margin-left: 0.5em;
-  margin-bottom: 2.5em;
+  margin-left: 2.0em;
+  margin-bottom: 3.0em;
   margin-top: 0.5em; }
 
 
@@ -761,6 +778,10 @@ span.pragmawrap {
   display: none;
 }
 
+span.attachedType {
+  display: none;
+  visibility: hidden;
+}
 </style>
 
 <script type="text/javascript" src="dochack.js"></script>
@@ -807,12 +828,12 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#AuthorizationResponse"
     title="AuthorizationResponse = ref object
-  code*, state*: string"><wbr />Authorization<wbr />Response<span class="attachedType" style="visibility:hidden"></span></a></li>
+  code*, state*: string"><wbr />Authorization<wbr />Response<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#AuthorizationError"
     title="AuthorizationError = object of Exception
-  error*, errorDescription*, errorUri*, state*: string"><wbr />Authorization<wbr />Error<span class="attachedType" style="visibility:hidden"></span></a></li>
+  error*, errorDescription*, errorUri*, state*: string"><wbr />Authorization<wbr />Error<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#RedirectUriParseError"
-    title="RedirectUriParseError = object of Exception"><wbr />Redirect<wbr />Uri<wbr />Parse<wbr />Error<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="RedirectUriParseError = object of Exception"><wbr />Redirect<wbr />Uri<wbr />Parse<wbr />Error<span class="attachedType"></span></a></li>
 
   </ul>
 </li>
@@ -822,69 +843,69 @@ function main() {
       <li><a class="reference" href="#getAuthorizationCodeGrantUrl%2Cstring%2Cstring%2Cstring%2Cstring%2CopenArray%5Bstring%5D"
     title="getAuthorizationCodeGrantUrl(url, clientId: string;
                              redirectUri, state: string = &quot;&quot;;
-                             scope: openArray[string] = []): string"><wbr />get<wbr />Authorization<wbr />Code<wbr />Grant<wbr />Url<span class="attachedType" style="visibility:hidden"></span></a></li>
+                             scope: openArray[string] = []): string"><wbr />get<wbr />Authorization<wbr />Code<wbr />Grant<wbr />Url<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getImplicitGrantUrl%2Cstring%2Cstring%2Cstring%2Cstring%2CopenArray%5Bstring%5D"
     title="getImplicitGrantUrl(url, clientId: string; redirectUri, state: string = &quot;&quot;;
-                    scope: openArray[string] = []): string"><wbr />get<wbr />Implicit<wbr />Grant<wbr />Url<span class="attachedType" style="visibility:hidden"></span></a></li>
+                    scope: openArray[string] = []): string"><wbr />get<wbr />Implicit<wbr />Grant<wbr />Url<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getBasicAuthorizationHeader%2Cstring%2Cstring"
-    title="getBasicAuthorizationHeader(clientId, clientSecret: string): HttpHeaders"><wbr />get<wbr />Basic<wbr />Authorization<wbr />Header<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="getBasicAuthorizationHeader(clientId, clientSecret: string): HttpHeaders"><wbr />get<wbr />Basic<wbr />Authorization<wbr />Header<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getBearerRequestHeader%2Cstring"
-    title="getBearerRequestHeader(accessToken: string): HttpHeaders"><wbr />get<wbr />Bearer<wbr />Request<wbr />Header<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="getBearerRequestHeader(accessToken: string): HttpHeaders"><wbr />get<wbr />Bearer<wbr />Request<wbr />Header<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getAuthorizationCodeAccessToken%2CAsyncHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2Cbool"
     title="getAuthorizationCodeAccessToken(client: AsyncHttpClient;
                                 url, code, clientId, clientSecret: string;
                                 redirectUri: string = &quot;&quot;; useBasicAuth: bool = true): Future[
-    AsyncResponse]"><wbr />get<wbr />Authorization<wbr />Code<wbr />Access<wbr />Token<span class="attachedType" style="visibility:hidden"></span></a></li>
+    AsyncResponse]"><wbr />get<wbr />Authorization<wbr />Code<wbr />Access<wbr />Token<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getAuthorizationCodeAccessToken%2CHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2Cbool"
     title="getAuthorizationCodeAccessToken(client: HttpClient;
                                 url, code, clientId, clientSecret: string;
-                                redirectUri: string = &quot;&quot;; useBasicAuth: bool = true): Response"><wbr />get<wbr />Authorization<wbr />Code<wbr />Access<wbr />Token<span class="attachedType" style="visibility:hidden"></span></a></li>
+                                redirectUri: string = &quot;&quot;; useBasicAuth: bool = true): Response"><wbr />get<wbr />Authorization<wbr />Code<wbr />Access<wbr />Token<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#generateState"
-    title="generateState(): string"><wbr />generate<wbr />State<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="generateState(): string"><wbr />generate<wbr />State<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#parseAuthorizationResponse%2CUri"
-    title="parseAuthorizationResponse(uri: Uri): AuthorizationResponse"><wbr />parse<wbr />Authorization<wbr />Response<span class="attachedType" style="visibility:hidden">AuthorizationResponse</span></a></li>
+    title="parseAuthorizationResponse(uri: Uri): AuthorizationResponse"><wbr />parse<wbr />Authorization<wbr />Response<span class="attachedType">AuthorizationResponse</span></a></li>
   <li><a class="reference" href="#parseAuthorizationResponse%2Cstring"
-    title="parseAuthorizationResponse(uri: string): AuthorizationResponse"><wbr />parse<wbr />Authorization<wbr />Response<span class="attachedType" style="visibility:hidden">AuthorizationResponse</span></a></li>
-  <li><a class="reference" href="#authorizationCodeGrant%2CAsyncHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5Bstring%5D%2Cint"
+    title="parseAuthorizationResponse(uri: string): AuthorizationResponse"><wbr />parse<wbr />Authorization<wbr />Response<span class="attachedType">AuthorizationResponse</span></a></li>
+  <li><a class="reference" href="#authorizationCodeGrant%2CAsyncHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5BT%5D%5Bstring%5D%2Cint"
     title="authorizationCodeGrant(client: AsyncHttpClient; authorizeUrl,
     accessTokenRequestUrl, clientId, clientSecret: string; html: string = &quot;&quot;;
-                       scope: seq[string] = @[]; port: int = 8080): Future[AsyncResponse]"><wbr />authorization<wbr />Code<wbr />Grant<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#authorizationCodeGrant%2CHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5Bstring%5D%2Cint"
+                       scope: seq[string] = @[]; port: int = 8080): Future[AsyncResponse]"><wbr />authorization<wbr />Code<wbr />Grant<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#authorizationCodeGrant%2CHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5BT%5D%5Bstring%5D%2Cint"
     title="authorizationCodeGrant(client: HttpClient; authorizeUrl, accessTokenRequestUrl,
     clientId, clientSecret: string; html: string = &quot;&quot;; scope: seq[string] = @[];
-                       port: int = 8080): Response"><wbr />authorization<wbr />Code<wbr />Grant<span class="attachedType" style="visibility:hidden"></span></a></li>
+                       port: int = 8080): Response"><wbr />authorization<wbr />Code<wbr />Grant<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#implicitGrant%2Cstring%2Cstring%2Cstring%2CopenArray%5Bstring%5D%2Cint"
     title="implicitGrant(url, clientId: string; html: string = &quot;&quot;; scope: openArray[string] = [];
-              port: int = 8080): string"><wbr />implicit<wbr />Grant<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#resourceOwnerPassCredsGrant%2CAsyncHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5Bstring%5D%2Cbool"
+              port: int = 8080): string"><wbr />implicit<wbr />Grant<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#resourceOwnerPassCredsGrant%2CAsyncHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5BT%5D%5Bstring%5D%2Cbool"
     title="resourceOwnerPassCredsGrant(client: AsyncHttpClient; url, clientId, clientSecret,
     username, password: string; scope: seq[string] = @[]; useBasicAuth: bool = true): Future[
-    AsyncResponse]"><wbr />resource<wbr />Owner<wbr />Pass<wbr />Creds<wbr />Grant<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#resourceOwnerPassCredsGrant%2CHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5Bstring%5D%2Cbool"
+    AsyncResponse]"><wbr />resource<wbr />Owner<wbr />Pass<wbr />Creds<wbr />Grant<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#resourceOwnerPassCredsGrant%2CHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5BT%5D%5Bstring%5D%2Cbool"
     title="resourceOwnerPassCredsGrant(client: HttpClient; url, clientId, clientSecret,
-    username, password: string; scope: seq[string] = @[]; useBasicAuth: bool = true): Response"><wbr />resource<wbr />Owner<wbr />Pass<wbr />Creds<wbr />Grant<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#clientCredsGrant%2CAsyncHttpClient%2Cstring%2Cstring%2Cstring%2Cseq%5Bstring%5D%2Cbool"
+    username, password: string; scope: seq[string] = @[]; useBasicAuth: bool = true): Response"><wbr />resource<wbr />Owner<wbr />Pass<wbr />Creds<wbr />Grant<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#clientCredsGrant%2CAsyncHttpClient%2Cstring%2Cstring%2Cstring%2Cseq%5BT%5D%5Bstring%5D%2Cbool"
     title="clientCredsGrant(client: AsyncHttpClient; url, clientid, clientsecret: string;
                  scope: seq[string] = @[]; useBasicAuth: bool = true): Future[
-    AsyncResponse]"><wbr />client<wbr />Creds<wbr />Grant<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#clientCredsGrant%2CHttpClient%2Cstring%2Cstring%2Cstring%2Cseq%5Bstring%5D%2Cbool"
+    AsyncResponse]"><wbr />client<wbr />Creds<wbr />Grant<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#clientCredsGrant%2CHttpClient%2Cstring%2Cstring%2Cstring%2Cseq%5BT%5D%5Bstring%5D%2Cbool"
     title="clientCredsGrant(client: HttpClient; url, clientid, clientsecret: string;
-                 scope: seq[string] = @[]; useBasicAuth: bool = true): Response"><wbr />client<wbr />Creds<wbr />Grant<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#refreshToken%2CAsyncHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5Bstring%5D%2Cbool"
+                 scope: seq[string] = @[]; useBasicAuth: bool = true): Response"><wbr />client<wbr />Creds<wbr />Grant<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#refreshToken%2CAsyncHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5BT%5D%5Bstring%5D%2Cbool"
     title="refreshToken(client: AsyncHttpClient;
              url, clientId, clientSecret, refreshToken: string;
-             scope: seq[string] = @[]; useBasicAuth: bool = true): Future[AsyncResponse]"><wbr />refresh<wbr />Token<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#refreshToken%2CHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5Bstring%5D%2Cbool"
+             scope: seq[string] = @[]; useBasicAuth: bool = true): Future[AsyncResponse]"><wbr />refresh<wbr />Token<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#refreshToken%2CHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5BT%5D%5Bstring%5D%2Cbool"
     title="refreshToken(client: HttpClient;
              url, clientId, clientSecret, refreshToken: string;
-             scope: seq[string] = @[]; useBasicAuth: bool = true): Response"><wbr />refresh<wbr />Token<span class="attachedType" style="visibility:hidden"></span></a></li>
+             scope: seq[string] = @[]; useBasicAuth: bool = true): Response"><wbr />refresh<wbr />Token<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#bearerRequest%2CAsyncHttpClient%2Cstring%2Cstring%2CHttpHeaders%2Cstring"
     title="bearerRequest(client: AsyncHttpClient; url, accessToken: string;
               httpMethod = HttpGET; extraHeaders: HttpHeaders = nil; body = &quot;&quot;): Future[
-    AsyncResponse]"><wbr />bearer<wbr />Request<span class="attachedType" style="visibility:hidden"></span></a></li>
+    AsyncResponse]"><wbr />bearer<wbr />Request<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#bearerRequest%2CHttpClient%2Cstring%2Cstring%2CHttpHeaders%2Cstring"
     title="bearerRequest(client: HttpClient; url, accessToken: string; httpMethod = HttpGET;
-              extraHeaders: HttpHeaders = nil; body = &quot;&quot;): Response"><wbr />bearer<wbr />Request<span class="attachedType" style="visibility:hidden"></span></a></li>
+              extraHeaders: HttpHeaders = nil; body = &quot;&quot;): Response"><wbr />bearer<wbr />Request<span class="attachedType"></span></a></li>
 
   </ul>
 </li>
@@ -894,6 +915,7 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
+  
   <p class="module-desc">This module supports access to resources by OAuth 2.0.<p>Please refer to <a class="reference external" href="http://oauth.net/2/">OAuth Core 2.0</a> details.<br /></p></p>
   <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
@@ -905,6 +927,7 @@ function main() {
 <dd>
 
 
+
 </dd>
 <a id="AuthorizationError"></a>
 <dt><pre><a href="oauth2.html#AuthorizationError"><span class="Identifier">AuthorizationError</span></a> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">Exception</span>
@@ -913,10 +936,12 @@ function main() {
 <dd>
 
 
+
 </dd>
 <a id="RedirectUriParseError"></a>
 <dt><pre><a href="oauth2.html#RedirectUriParseError"><span class="Identifier">RedirectUriParseError</span></a> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">Exception</span></pre></dt>
 <dd>
+
 
 
 </dd>
@@ -931,6 +956,7 @@ function main() {
                                  <span class="Identifier">scope</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Returns the URL for sending authorization requests in &quot;Authorization Code Grant&quot; type.
 
 </dd>
@@ -938,6 +964,7 @@ Returns the URL for sending authorization requests in &quot;Authorization Code G
 <dt><pre><span class="Keyword">proc</span> <a href="#getImplicitGrantUrl%2Cstring%2Cstring%2Cstring%2Cstring%2CopenArray%5Bstring%5D"><span class="Identifier">getImplicitGrantUrl</span></a><span class="Other">(</span><span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">clientId</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">redirectUri</span><span class="Other">,</span> <span class="Identifier">state</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
                         <span class="Identifier">scope</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Returns the URL for sending authorization requests in &quot;Implicit Grant&quot; type.
 
 </dd>
@@ -945,12 +972,14 @@ Returns the URL for sending authorization requests in &quot;Implicit Grant&quot;
 <dt><pre><span class="Keyword">proc</span> <a href="#getBasicAuthorizationHeader%2Cstring%2Cstring"><span class="Identifier">getBasicAuthorizationHeader</span></a><span class="Other">(</span><span class="Identifier">clientId</span><span class="Other">,</span> <span class="Identifier">clientSecret</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">HttpHeaders</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Returns a header necessary to basic authentication.
 
 </dd>
 <a id="getBearerRequestHeader,string"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#getBearerRequestHeader%2Cstring"><span class="Identifier">getBearerRequestHeader</span></a><span class="Other">(</span><span class="Identifier">accessToken</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">HttpHeaders</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Returns a header necessary to bearer request.
 
 </dd>
@@ -959,8 +988,9 @@ Returns a header necessary to bearer request.
                                     <span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">code</span><span class="Other">,</span> <span class="Identifier">clientId</span><span class="Other">,</span> <span class="Identifier">clientSecret</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
                                     <span class="Identifier">redirectUri</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
                                     <span class="Identifier">useBasicAuth</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Future</span><span class="Other">[</span><span class="Identifier">AsyncResponse</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">FutureError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">,</span> <span class="Identifier">TimeEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">FutureError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">,</span> <span class="Identifier">TimeEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Send the access token request for &quot;Authorization Code Grant&quot; type.
 
 </dd>
@@ -973,12 +1003,14 @@ Send the access token request for &quot;Authorization Code Grant&quot; type.
     <span class="Identifier">ProtocolError</span><span class="Other">,</span> <span class="Identifier">KeyError</span><span class="Other">,</span> <span class="Identifier">Defect</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">,</span> <span class="Identifier">WriteIOEffect</span><span class="Other">,</span> <span class="Identifier">TimeEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Send the access token request for &quot;Authorization Code Grant&quot; type.
 
 </dd>
 <a id="generateState"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#generateState"><span class="Identifier">generateState</span></a><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">TimeEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Generate a state.
 
 </dd>
@@ -986,6 +1018,7 @@ Generate a state.
 <dt><pre><span class="Keyword">proc</span> <a href="#parseAuthorizationResponse%2CUri"><span class="Identifier">parseAuthorizationResponse</span></a><span class="Other">(</span><span class="Identifier">uri</span><span class="Other">:</span> <span class="Identifier">Uri</span><span class="Other">)</span><span class="Other">:</span> <a href="oauth2.html#AuthorizationResponse"><span class="Identifier">AuthorizationResponse</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">KeyError</span><span class="Other">,</span> <span class="Identifier">AuthorizationError</span><span class="Other">,</span> <span class="Identifier">RedirectUriParseError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Parse an authorization response of &quot;Authorization Code Grant&quot; added to redirect uri.
 
 </dd>
@@ -995,25 +1028,34 @@ Parse an authorization response of &quot;Authorization Code Grant&quot; added to
 <dd>
 
 
+
 </dd>
-<a id="authorizationCodeGrant,AsyncHttpClient,string,string,string,string,string,seq[string],int"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#authorizationCodeGrant%2CAsyncHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5Bstring%5D%2Cint"><span class="Identifier">authorizationCodeGrant</span></a><span class="Other">(</span><span class="Identifier">client</span><span class="Other">:</span> <span class="Identifier">AsyncHttpClient</span><span class="Other">;</span> <span class="Identifier">authorizeUrl</span><span class="Other">,</span>
+<a id="authorizationCodeGrant,AsyncHttpClient,string,string,string,string,string,seq[T][string],int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#authorizationCodeGrant%2CAsyncHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5BT%5D%5Bstring%5D%2Cint"><span class="Identifier">authorizationCodeGrant</span></a><span class="Other">(</span><span class="Identifier">client</span><span class="Other">:</span> <span class="Identifier">AsyncHttpClient</span><span class="Other">;</span> <span class="Identifier">authorizeUrl</span><span class="Other">,</span>
     <span class="Identifier">accessTokenRequestUrl</span><span class="Other">,</span> <span class="Identifier">clientId</span><span class="Other">,</span> <span class="Identifier">clientSecret</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">html</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
                            <span class="Identifier">scope</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">port</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">8080</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Future</span><span class="Other">[</span>
-    <span class="Identifier">AsyncResponse</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">deprecated</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">FutureError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">AsyncResponse</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">deprecated</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">FutureError</span><span class="Other">]</span><span class="Other">,</span>
                     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">TimeEffect</span><span class="Other">,</span> <span class="Identifier">RootEffect</span><span class="Other">,</span> <span class="Identifier">ReadIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+  <div class="deprecation-message">
+    <b>Deprecated</b> 
+  </div>
+
 Send a request for &quot;Authorization Code Grant&quot; type.<p>This method, outputs a URL for the authorization request at first.<br />Then, wait for the callback at &quot;<a class="reference external" href="http://localhost:${port}&quot;">http://localhost:${port}&quot;</a>.<br />When receiving the callback, check the state, and request an access token to the server.<br />Returns the request result of the access token.<br /></p>
 
 </dd>
-<a id="authorizationCodeGrant,HttpClient,string,string,string,string,string,seq[string],int"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#authorizationCodeGrant%2CHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5Bstring%5D%2Cint"><span class="Identifier">authorizationCodeGrant</span></a><span class="Other">(</span><span class="Identifier">client</span><span class="Other">:</span> <span class="Identifier">HttpClient</span><span class="Other">;</span> <span class="Identifier">authorizeUrl</span><span class="Other">,</span> <span class="Identifier">accessTokenRequestUrl</span><span class="Other">,</span>
+<a id="authorizationCodeGrant,HttpClient,string,string,string,string,string,seq[T][string],int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#authorizationCodeGrant%2CHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5BT%5D%5Bstring%5D%2Cint"><span class="Identifier">authorizationCodeGrant</span></a><span class="Other">(</span><span class="Identifier">client</span><span class="Other">:</span> <span class="Identifier">HttpClient</span><span class="Other">;</span> <span class="Identifier">authorizeUrl</span><span class="Other">,</span> <span class="Identifier">accessTokenRequestUrl</span><span class="Other">,</span>
     <span class="Identifier">clientId</span><span class="Other">,</span> <span class="Identifier">clientSecret</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">html</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">scope</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span>
                            <span class="Identifier">port</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">8080</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Response</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">deprecated</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span>
     <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">FutureError</span><span class="Other">,</span> <span class="Identifier">UnpackError</span><span class="Other">,</span> <span class="Identifier">OSError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">KeyError</span><span class="Other">,</span>
     <span class="Identifier">HttpRequestError</span><span class="Other">,</span> <span class="Identifier">SslError</span><span class="Other">,</span> <span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">TimeoutError</span><span class="Other">,</span> <span class="Identifier">ProtocolError</span><span class="Other">,</span> <span class="Identifier">Defect</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">TimeEffect</span><span class="Other">,</span> <span class="Identifier">RootEffect</span><span class="Other">,</span> <span class="Identifier">ReadIOEffect</span><span class="Other">,</span> <span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+  <div class="deprecation-message">
+    <b>Deprecated</b> 
+  </div>
+
 Send a request for &quot;Authorization Code Grant&quot; type.<p>This method, outputs a URL for the authorization request at first.<br />Then, wait for the callback at &quot;<a class="reference external" href="http://localhost:${port}&quot;">http://localhost:${port}&quot;</a>.<br />When receiving the callback, check the state, and request an access token to the server.<br />Returns the request result of the access token.<br /></p>
 
 </dd>
@@ -1023,76 +1065,87 @@ Send a request for &quot;Authorization Code Grant&quot; type.<p>This method, out
     <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">FutureError</span><span class="Other">,</span> <span class="Identifier">UnpackError</span><span class="Other">,</span> <span class="Identifier">OSError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">KeyError</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">TimeEffect</span><span class="Other">,</span> <span class="Identifier">RootEffect</span><span class="Other">,</span> <span class="Identifier">ReadIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+  <div class="deprecation-message">
+    <b>Deprecated</b> 
+  </div>
+
 Send a request for &quot;Implicit Grant&quot; type.<p>This method, outputs a URL for the authorization request at first.<br />Then, wait for the callback at &quot;<a class="reference external" href="http://localhost:${port}&quot;">http://localhost:${port}&quot;</a>.<br />When receiving the callback, check the state, returns the Uri.query as a result.<br /></p>
 
 </dd>
-<a id="resourceOwnerPassCredsGrant,AsyncHttpClient,string,string,string,string,string,seq[string],bool"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#resourceOwnerPassCredsGrant%2CAsyncHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5Bstring%5D%2Cbool"><span class="Identifier">resourceOwnerPassCredsGrant</span></a><span class="Other">(</span><span class="Identifier">client</span><span class="Other">:</span> <span class="Identifier">AsyncHttpClient</span><span class="Other">;</span> <span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">clientId</span><span class="Other">,</span>
+<a id="resourceOwnerPassCredsGrant,AsyncHttpClient,string,string,string,string,string,seq[T][string],bool"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#resourceOwnerPassCredsGrant%2CAsyncHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5BT%5D%5Bstring%5D%2Cbool"><span class="Identifier">resourceOwnerPassCredsGrant</span></a><span class="Other">(</span><span class="Identifier">client</span><span class="Other">:</span> <span class="Identifier">AsyncHttpClient</span><span class="Other">;</span> <span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">clientId</span><span class="Other">,</span>
     <span class="Identifier">clientSecret</span><span class="Other">,</span> <span class="Identifier">username</span><span class="Other">,</span> <span class="Identifier">password</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">scope</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span>
                                 <span class="Identifier">useBasicAuth</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Future</span><span class="Other">[</span><span class="Identifier">AsyncResponse</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">FutureError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">,</span> <span class="Identifier">TimeEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">FutureError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">,</span> <span class="Identifier">TimeEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Send a request for &quot;Resource Owner Password Credentials Grant&quot; type.<blockquote><p><p>The client MUST discard the credentials once an access token has been obtained.<br />-- <a class="reference external" href="https://tools.ietf.org/html/rfc6749#section-4.3">https://tools.ietf.org/html/rfc6749#section-4.3</a><br /></p></p></blockquote>
 
 
 </dd>
-<a id="resourceOwnerPassCredsGrant,HttpClient,string,string,string,string,string,seq[string],bool"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#resourceOwnerPassCredsGrant%2CHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5Bstring%5D%2Cbool"><span class="Identifier">resourceOwnerPassCredsGrant</span></a><span class="Other">(</span><span class="Identifier">client</span><span class="Other">:</span> <span class="Identifier">HttpClient</span><span class="Other">;</span> <span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">clientId</span><span class="Other">,</span> <span class="Identifier">clientSecret</span><span class="Other">,</span>
+<a id="resourceOwnerPassCredsGrant,HttpClient,string,string,string,string,string,seq[T][string],bool"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#resourceOwnerPassCredsGrant%2CHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5BT%5D%5Bstring%5D%2Cbool"><span class="Identifier">resourceOwnerPassCredsGrant</span></a><span class="Other">(</span><span class="Identifier">client</span><span class="Other">:</span> <span class="Identifier">HttpClient</span><span class="Other">;</span> <span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">clientId</span><span class="Other">,</span> <span class="Identifier">clientSecret</span><span class="Other">,</span>
     <span class="Identifier">username</span><span class="Other">,</span> <span class="Identifier">password</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">scope</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">useBasicAuth</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Response</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span>
     <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">HttpRequestError</span><span class="Other">,</span> <span class="Identifier">SslError</span><span class="Other">,</span> <span class="Identifier">OSError</span><span class="Other">,</span> <span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">TimeoutError</span><span class="Other">,</span>
     <span class="Identifier">ProtocolError</span><span class="Other">,</span> <span class="Identifier">KeyError</span><span class="Other">,</span> <span class="Identifier">Defect</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">,</span> <span class="Identifier">WriteIOEffect</span><span class="Other">,</span> <span class="Identifier">TimeEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Send a request for &quot;Resource Owner Password Credentials Grant&quot; type.<blockquote><p><p>The client MUST discard the credentials once an access token has been obtained.<br />-- <a class="reference external" href="https://tools.ietf.org/html/rfc6749#section-4.3">https://tools.ietf.org/html/rfc6749#section-4.3</a><br /></p></p></blockquote>
 
 
 </dd>
-<a id="clientCredsGrant,AsyncHttpClient,string,string,string,seq[string],bool"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#clientCredsGrant%2CAsyncHttpClient%2Cstring%2Cstring%2Cstring%2Cseq%5Bstring%5D%2Cbool"><span class="Identifier">clientCredsGrant</span></a><span class="Other">(</span><span class="Identifier">client</span><span class="Other">:</span> <span class="Identifier">AsyncHttpClient</span><span class="Other">;</span> <span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">clientid</span><span class="Other">,</span> <span class="Identifier">clientsecret</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
+<a id="clientCredsGrant,AsyncHttpClient,string,string,string,seq[T][string],bool"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#clientCredsGrant%2CAsyncHttpClient%2Cstring%2Cstring%2Cstring%2Cseq%5BT%5D%5Bstring%5D%2Cbool"><span class="Identifier">clientCredsGrant</span></a><span class="Other">(</span><span class="Identifier">client</span><span class="Other">:</span> <span class="Identifier">AsyncHttpClient</span><span class="Other">;</span> <span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">clientid</span><span class="Other">,</span> <span class="Identifier">clientsecret</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
                      <span class="Identifier">scope</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">useBasicAuth</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Future</span><span class="Other">[</span>
-    <span class="Identifier">AsyncResponse</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">FutureError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">AsyncResponse</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">FutureError</span><span class="Other">]</span><span class="Other">,</span>
                     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">,</span> <span class="Identifier">TimeEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Send a request for &quot;Client Credentials Grant&quot; type.
 
 </dd>
-<a id="clientCredsGrant,HttpClient,string,string,string,seq[string],bool"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#clientCredsGrant%2CHttpClient%2Cstring%2Cstring%2Cstring%2Cseq%5Bstring%5D%2Cbool"><span class="Identifier">clientCredsGrant</span></a><span class="Other">(</span><span class="Identifier">client</span><span class="Other">:</span> <span class="Identifier">HttpClient</span><span class="Other">;</span> <span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">clientid</span><span class="Other">,</span> <span class="Identifier">clientsecret</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
+<a id="clientCredsGrant,HttpClient,string,string,string,seq[T][string],bool"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#clientCredsGrant%2CHttpClient%2Cstring%2Cstring%2Cstring%2Cseq%5BT%5D%5Bstring%5D%2Cbool"><span class="Identifier">clientCredsGrant</span></a><span class="Other">(</span><span class="Identifier">client</span><span class="Other">:</span> <span class="Identifier">HttpClient</span><span class="Other">;</span> <span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">clientid</span><span class="Other">,</span> <span class="Identifier">clientsecret</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
                      <span class="Identifier">scope</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">useBasicAuth</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Response</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span>
     <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">HttpRequestError</span><span class="Other">,</span> <span class="Identifier">SslError</span><span class="Other">,</span> <span class="Identifier">OSError</span><span class="Other">,</span> <span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">TimeoutError</span><span class="Other">,</span>
     <span class="Identifier">ProtocolError</span><span class="Other">,</span> <span class="Identifier">KeyError</span><span class="Other">,</span> <span class="Identifier">Defect</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">,</span> <span class="Identifier">WriteIOEffect</span><span class="Other">,</span> <span class="Identifier">TimeEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Send a request for &quot;Client Credentials Grant&quot; type.
 
 </dd>
-<a id="refreshToken,AsyncHttpClient,string,string,string,string,seq[string],bool"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#refreshToken%2CAsyncHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5Bstring%5D%2Cbool"><span class="Identifier">refreshToken</span></a><span class="Other">(</span><span class="Identifier">client</span><span class="Other">:</span> <span class="Identifier">AsyncHttpClient</span><span class="Other">;</span>
+<a id="refreshToken,AsyncHttpClient,string,string,string,string,seq[T][string],bool"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#refreshToken%2CAsyncHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5BT%5D%5Bstring%5D%2Cbool"><span class="Identifier">refreshToken</span></a><span class="Other">(</span><span class="Identifier">client</span><span class="Other">:</span> <span class="Identifier">AsyncHttpClient</span><span class="Other">;</span>
                  <span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">clientId</span><span class="Other">,</span> <span class="Identifier">clientSecret</span><span class="Other">,</span> <span class="Identifier">refreshToken</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
                  <span class="Identifier">scope</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">useBasicAuth</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Future</span><span class="Other">[</span>
-    <span class="Identifier">AsyncResponse</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">FutureError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">AsyncResponse</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">FutureError</span><span class="Other">]</span><span class="Other">,</span>
                     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">,</span> <span class="Identifier">TimeEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Send an update request of the access token.
 
 </dd>
-<a id="refreshToken,HttpClient,string,string,string,string,seq[string],bool"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#refreshToken%2CHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5Bstring%5D%2Cbool"><span class="Identifier">refreshToken</span></a><span class="Other">(</span><span class="Identifier">client</span><span class="Other">:</span> <span class="Identifier">HttpClient</span><span class="Other">;</span>
+<a id="refreshToken,HttpClient,string,string,string,string,seq[T][string],bool"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#refreshToken%2CHttpClient%2Cstring%2Cstring%2Cstring%2Cstring%2Cseq%5BT%5D%5Bstring%5D%2Cbool"><span class="Identifier">refreshToken</span></a><span class="Other">(</span><span class="Identifier">client</span><span class="Other">:</span> <span class="Identifier">HttpClient</span><span class="Other">;</span>
                  <span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">clientId</span><span class="Other">,</span> <span class="Identifier">clientSecret</span><span class="Other">,</span> <span class="Identifier">refreshToken</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
                  <span class="Identifier">scope</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">useBasicAuth</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Response</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span>
     <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">HttpRequestError</span><span class="Other">,</span> <span class="Identifier">SslError</span><span class="Other">,</span> <span class="Identifier">OSError</span><span class="Other">,</span> <span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">TimeoutError</span><span class="Other">,</span>
     <span class="Identifier">ProtocolError</span><span class="Other">,</span> <span class="Identifier">KeyError</span><span class="Other">,</span> <span class="Identifier">Defect</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">,</span> <span class="Identifier">WriteIOEffect</span><span class="Other">,</span> <span class="Identifier">TimeEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Send an update request of the access token.
 
 </dd>
 <a id="bearerRequest,AsyncHttpClient,string,string,HttpHeaders,string"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#bearerRequest%2CAsyncHttpClient%2Cstring%2Cstring%2CHttpHeaders%2Cstring"><span class="Identifier">bearerRequest</span></a><span class="Other">(</span><span class="Identifier">client</span><span class="Other">:</span> <span class="Identifier">AsyncHttpClient</span><span class="Other">;</span> <span class="Identifier">url</span><span class="Other">,</span> <span class="Identifier">accessToken</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
                   <span class="Identifier">httpMethod</span> <span class="Other">=</span> <span class="Identifier">HttpGET</span><span class="Other">;</span> <span class="Identifier">extraHeaders</span><span class="Other">:</span> <span class="Identifier">HttpHeaders</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">body</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Future</span><span class="Other">[</span>
-    <span class="Identifier">AsyncResponse</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">FutureError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">AsyncResponse</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">FutureError</span><span class="Other">]</span><span class="Other">,</span>
                     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">,</span> <span class="Identifier">TimeEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Send a request using the bearer token.
 
 </dd>
@@ -1103,6 +1156,7 @@ Send a request using the bearer token.
     <span class="Identifier">ProtocolError</span><span class="Other">,</span> <span class="Identifier">KeyError</span><span class="Other">,</span> <span class="Identifier">Defect</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">,</span> <span class="Identifier">WriteIOEffect</span><span class="Other">,</span> <span class="Identifier">TimeEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+
 Send a request using the bearer token.
 
 </dd>
@@ -1116,7 +1170,7 @@ Send a request using the bearer token.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-12-22 07:29:14 UTC</small>
+        <small>Made with Nim. Generated: 2020-01-11 07:32:46 UTC</small>
       </div>
     </div>
   </div>
