@@ -50,7 +50,7 @@ proc setRequestHeaders(headers: HttpHeaders, body: string) =
     headers["Content-Length"] = $len(body)
 
 proc getGrantUrl(url, clientId: string, grantType: GrantType,
-    redirectUri, state: string, scope: openarray[string] = []): string =
+    redirectUri, state: string, scope: openarray[string] = [], accessType: string): string =
     var url = url
     let parsed = parseUri(url)
     url = url & (if parsed.query == "": "?" else: "&")
@@ -60,17 +60,21 @@ proc getGrantUrl(url, clientId: string, grantType: GrantType,
         url = url & "&redirect_uri=" & encodeUrl(redirectUri)
     if len(scope) > 0:
         url = url & "&scope=" & encodeUrl(scope.join(" "))
+    if len(accessType) > 0:
+        url = url & "&access_type=" & encodeUrl(accessType)    
     result = url
 
 proc getAuthorizationCodeGrantUrl*(url, clientId: string,
-    redirectUri, state: string = "", scope: openarray[string] = []): string =
+    redirectUri, state: string = "", scope: openarray[string] = [],
+    accessType: string = ""): string =
     ## Returns the URL for sending authorization requests in "Authorization Code Grant" type.
-    result = getGrantUrl(url, clientId, AuthorizationCode, redirectUri, state, scope)
+    result = getGrantUrl(url, clientId, AuthorizationCode, redirectUri, state, scope, accessType)
 
 proc getImplicitGrantUrl*(url, clientId: string,
-    redirectUri, state: string = "", scope: openarray[string] = []): string =
+    redirectUri, state: string = "", scope: openarray[string] = [],
+    accessType: string = ""): string =
     ## Returns the URL for sending authorization requests in "Implicit Grant" type.
-    result = getGrantUrl(url, clientId, Implicit, redirectUri, state, scope)
+    result = getGrantUrl(url, clientId, Implicit, redirectUri, state, scope, accessType)
 
 proc getBasicAuthorizationHeader*(clientId, clientSecret: string): HttpHeaders =
     ## Returns a header necessary to basic authentication.
