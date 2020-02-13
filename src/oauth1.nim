@@ -271,5 +271,4 @@ when defined(testing):
     assert len(createNonce()) == 32
 
 when not defined(ssl):
-    echo "SSL support is required."
-    quit 1
+    {.error: "SSL support is required.".}
