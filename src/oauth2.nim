@@ -323,5 +323,4 @@ when defined(testing):
     assert header["Content-Length"] == "0"
 
 when not defined(ssl):
-    echo "SSL support is required."
-    quit 1
+    {.error: "SSL support is required.".}
