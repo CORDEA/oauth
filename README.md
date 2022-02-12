@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/CORDEA/oauth.svg?branch=develop)](https://travis-ci.org/CORDEA/oauth)
+![Build Status](https://github.com/CORDEA/oauth/actions/workflows/build.yml/badge.svg?branch=develop)
 
 # oauth
 
