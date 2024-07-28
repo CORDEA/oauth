@@ -25,7 +25,7 @@ const
     authorizeUrl = "https://slack.com/oauth/authorize"
     accessTokenUrl = "https://slack.com/api/oauth.access"
     redirectUri = "http://localhost:8080"
-    url = "https://slack.com/api/channels.list"
+    url = "https://slack.com/api/conversations.list"
 
 echo "Please enter the client id."
 let clientId = readLine(stdin)

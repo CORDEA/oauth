@@ -60,7 +60,7 @@ assert state == grantResponse.state
 let
   response = client.getAuthorizationCodeAccessToken(
     accessTokenUrl,
-    grantResponse.code,
+    decodeUrl(grantResponse.code),
     clientId,
     clientSecret,
     redirectUri
@@ -72,7 +72,6 @@ let
     obj = parseJson(response.body)
     accessToken = obj["access_token"].str
     tokenType = obj["token_type"].str
-    refreshToken = obj["refresh_token"].str
 
 if tokenType == "Bearer":
   let r = client.bearerRequest(
