@@ -14,7 +14,10 @@
 # Author: Yoshihiro Tanaka <contact@cordea.jp>
 # date  :2016-03-08
 
+import base64
+import uri
 import oauth2
+import std/sysrand
 import strutils
 import httpclient
 import json
@@ -31,7 +34,7 @@ let clientSecret = readLine(stdin)
 
 let
     client = newHttpClient()
-    state = generateState()
+    state = encodeUrl(encode(urandom(128), safe = true))
     grantUrl = getAuthorizationCodeGrantUrl(
       authorizeUrl,
       clientId,

@@ -14,10 +14,12 @@
 # Author: Yoshihiro Tanaka <contact@cordea.jp>
 # date  : 2019-12-22
 
+import base64
 import uri
 import json
 import oauth2
 import sequtils
+import std/sysrand
 import strutils
 import httpclient
 
@@ -33,7 +35,7 @@ echo "Please enter the client secret."
 let clientSecret = readLine(stdin)
 
 let
-  state = generateState()
+  state = encodeUrl(encode(urandom(128), safe = true))
   grantUrl = getAuthorizationCodeGrantUrl(authorizeUrl, clientId, redirectUri, state)
 echo "Please go to this url."
 echo grantUrl

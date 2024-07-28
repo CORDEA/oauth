@@ -15,7 +15,7 @@
 # Modified for Discord by William Hatcher @williamhatcher
 # date  : 2021-03-27
 
-import uri, json, sequtils, strutils, httpclient
+import base64, uri, json, sequtils, std/sysrand, strutils, httpclient
 import oauth2
 
 const
@@ -31,7 +31,7 @@ echo "Please enter the client secret: "
 let clientSecret = readLine(stdin)
 
 let
-  state = generateState()
+  state = encodeUrl(encode(urandom(128), safe = true))
   grantUrl = getAuthorizationCodeGrantUrl(authorizeUrl, clientId, redirectUri, state, scopes)
 echo "Please go to this url."
 echo grantUrl

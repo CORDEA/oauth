@@ -42,9 +42,6 @@ suite "OAuth2 test":
         let header = getBearerRequestHeader("Aladdin")
         assert header["Authorization"] == "Bearer Aladdin"
 
-    test "generate state":
-        assert len(generateState()) == 5
-
     test "parse redirect uri":
         let
             uri = "https://client.example.com/cb?code=SplxlOBeZQQYbYS6WxSbIA&state=xyz"
