@@ -16,7 +16,7 @@
 
 import unittest
 import httpclient
-import ../src/oauth2
+import ../src/oauth/oauth2
 
 suite "OAuth2 test":
     setup:

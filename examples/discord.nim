@@ -16,7 +16,7 @@
 # date  : 2021-03-27
 
 import base64, uri, json, sequtils, std/sysrand, strutils, httpclient
-import oauth2
+import oauth/oauth2
 
 const
     authorizeUrl = "https://discord.com/api/oauth2/authorize"
