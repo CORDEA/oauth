@@ -14,16 +14,18 @@
 # Author: Yoshihiro Tanaka <contact@cordea.jp>
 # date  :2016-03-08
 
+import base64
 import uri
 import json
 import oauth2
+import std/sysrand
 import httpclient
 
 const
     authorizeUrl = "https://slack.com/oauth/authorize"
     accessTokenUrl = "https://slack.com/api/oauth.access"
     redirectUri = "http://localhost:8080"
-    url = "https://slack.com/api/channels.list"
+    url = "https://slack.com/api/conversations.list"
 
 echo "Please enter the client id."
 let clientId = readLine(stdin)
@@ -31,7 +33,7 @@ echo "Please enter the client secret."
 let clientSecret = readLine(stdin)
 
 let
-  state = generateState()
+  state = encodeUrl(encode(urandom(128), safe = true))
   grantUrl = getAuthorizationCodeGrantUrl(authorizeUrl, clientId, redirectUri, state, @["channels:read"])
 echo "Please go to this url."
 echo grantUrl
