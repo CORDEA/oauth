@@ -76,7 +76,7 @@ proc hmacSha1(key, text: string): string =
     for _ in 0..(blockLength - len(byte) - 1):
         byte.add zeroByte
 
-    assert len(byte) == blockLength
+    doAssert len(byte) == blockLength
 
     for i in 0..len(byte) - 1:
         ipad = ipad & char(byte[i] xor ipadByte)

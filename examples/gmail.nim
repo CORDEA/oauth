@@ -55,7 +55,7 @@ try:
 except AuthorizationError as error:
   echo error.error
 
-assert state == grantResponse.state
+doAssert state == grantResponse.state
 
 let
   response = client.getAuthorizationCodeAccessToken(
