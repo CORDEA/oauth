@@ -14,7 +14,7 @@
 # Author: Yoshihiro Tanaka <contact@cordea.jp>
 # date  : 2017-06-09
 
-import oauth1
+import oauth/oauth1
 import tables
 import strutils
 import httpclient

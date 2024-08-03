@@ -16,7 +16,7 @@
 
 import base64
 import uri
-import oauth2
+import oauth/oauth2
 import std/sysrand
 import strutils
 import httpclient

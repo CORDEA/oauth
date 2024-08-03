@@ -17,7 +17,7 @@
 import base64
 import uri
 import json
-import oauth2
+import oauth/oauth2
 import sequtils
 import std/sysrand
 import strutils
