@@ -45,7 +45,7 @@ let
   receivedUri = readLine(stdin)
   grantResponse = receivedUri.parseAuthorizationResponse()
 
-assert state == grantResponse.state
+doAssert state == grantResponse.state
 
 let
   client = newHttpClient()

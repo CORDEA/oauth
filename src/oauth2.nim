@@ -149,7 +149,7 @@ proc getCallbackParamters(port: Port, html: string): Future[Uri] {.async.} =
         request.headers = newHttpHeaders()
         result = ""
         while not client.isClosed:
-            assert client != nil
+            doAssert client != nil
             request.client = client
             var line = await client.recvLine()
             if line == "":
@@ -221,7 +221,7 @@ proc authorizationCodeGrant*(client: HttpClient | AsyncHttpClient,
     let
         uri = waitFor getCallbackParamters(Port(port), html)
         params = parseRedirectUri(uri.query)
-    assert params["state"] == state
+    doAssert params["state"] == state
     result = await client.getAuthorizationCodeAccessToken(accessTokenRequestUrl, params["code"],
         clientId, clientSecret, redirectUri)
 
@@ -240,7 +240,7 @@ proc implicitGrant*(url, clientId, state: string, html: string = "",
         uri = waitFor getCallbackParamters(Port(port), html)
         query = uri.query
         params = parseRedirectUri(query)
-    assert params["state"] == state
+    doAssert params["state"] == state
     result = query
 
 proc resourceOwnerPassCredsGrant*(client: HttpClient | AsyncHttpClient,
