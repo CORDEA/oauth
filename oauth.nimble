@@ -1,5 +1,5 @@
 # Package
-version     = "0.10"
+version     = "0.11"
 author      = "Yoshihiro Tanaka"
 description = "OAuth library for nim"
 license     = "Apache License 2.0"
