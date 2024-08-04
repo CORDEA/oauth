@@ -16,7 +16,7 @@
 
 import unittest
 import httpclient
-import ../src/oauth2
+import ../src/oauth/oauth2
 
 suite "OAuth2 test":
     setup:
@@ -41,9 +41,6 @@ suite "OAuth2 test":
     test "get bearer request header":
         let header = getBearerRequestHeader("Aladdin")
         assert header["Authorization"] == "Bearer Aladdin"
-
-    test "generate state":
-        assert len(generateState()) == 5
 
     test "parse redirect uri":
         let

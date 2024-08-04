@@ -15,7 +15,7 @@
 # date  :2016-03-14
 
 import unittest
-import ../src/oauth1
+import ../src/oauth/oauth1
 import httpclient
 
 proc mockOAuth1Parameters(

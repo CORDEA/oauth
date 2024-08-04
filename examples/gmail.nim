@@ -14,7 +14,10 @@
 # Author: Yoshihiro Tanaka <contact@cordea.jp>
 # date  :2016-03-08
 
-import oauth2
+import base64
+import uri
+import oauth/oauth2
+import std/sysrand
 import strutils
 import httpclient
 import json
@@ -31,7 +34,7 @@ let clientSecret = readLine(stdin)
 
 let
     client = newHttpClient()
-    state = generateState()
+    state = encodeUrl(encode(urandom(128), safe = true))
     grantUrl = getAuthorizationCodeGrantUrl(
       authorizeUrl,
       clientId,
@@ -52,12 +55,12 @@ try:
 except AuthorizationError as error:
   echo error.error
 
-assert state == grantResponse.state
+doAssert state == grantResponse.state
 
 let
   response = client.getAuthorizationCodeAccessToken(
     accessTokenUrl,
-    grantResponse.code,
+    decodeUrl(grantResponse.code),
     clientId,
     clientSecret,
     redirectUri
@@ -69,7 +72,6 @@ let
     obj = parseJson(response.body)
     accessToken = obj["access_token"].str
     tokenType = obj["token_type"].str
-    refreshToken = obj["refresh_token"].str
 
 if tokenType == "Bearer":
   let r = client.bearerRequest(

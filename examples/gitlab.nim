@@ -14,7 +14,7 @@
 # Author: Yoshihiro Tanaka <contact@cordea.jp>
 # date  :2016-03-14
 
-import oauth2
+import oauth/oauth2
 import json, httpclient
 
 ## This is an example to get the access token by "Resource Owner Password Credentials Grant".

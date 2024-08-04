@@ -12,31 +12,27 @@
 # limitations under the License.
 
 # Author: Yoshihiro Tanaka <contact@cordea.jp>
-# date  : 2019-12-22
+# Modified for Discord by William Hatcher @williamhatcher
+# date  : 2021-03-27
 
-import base64
-import uri
-import json
+import base64, uri, json, sequtils, std/sysrand, strutils, httpclient
 import oauth/oauth2
-import sequtils
-import std/sysrand
-import strutils
-import httpclient
 
 const
-    authorizeUrl = "https://github.com/login/oauth/authorize"
-    accessTokenUrl = "https://github.com/login/oauth/access_token"
+    authorizeUrl = "https://discord.com/api/oauth2/authorize"
+    accessTokenUrl = "https://discord.com/api/oauth2/token"
     redirectUri = "http://localhost:8080"
-    url = "https://api.github.com/user"
+    userInfoUrl = "https://discord.com/api/users/@me"
+    scopes = ["identify"]
 
-echo "Please enter the client id."
+echo "Please enter the client id: "
 let clientId = readLine(stdin)
-echo "Please enter the client secret."
+echo "Please enter the client secret: "
 let clientSecret = readLine(stdin)
 
 let
   state = encodeUrl(encode(urandom(128), safe = true))
-  grantUrl = getAuthorizationCodeGrantUrl(authorizeUrl, clientId, redirectUri, state)
+  grantUrl = getAuthorizationCodeGrantUrl(authorizeUrl, clientId, redirectUri, state, scopes)
 echo "Please go to this url."
 echo grantUrl
 
@@ -57,12 +53,11 @@ let
     clientSecret,
     redirectUri
   )
-  accessToken = response.body
-    .split("&")
-    .mapIt(it.split("="))
-    .filterIt(it[0] == "access_token")[0][1]
+
+  accessToken = response.body.parseJson["access_token"].getStr
+
   r = client.bearerRequest(
-    url,
+    userInfoUrl,
     accessToken
   )
 

@@ -19,7 +19,6 @@
 
 import uri
 import base64
-import random
 import cgi
 import tables
 import strtabs
@@ -150,7 +149,7 @@ proc getCallbackParamters(port: Port, html: string): Future[Uri] {.async.} =
         request.headers = newHttpHeaders()
         result = ""
         while not client.isClosed:
-            assert client != nil
+            doAssert client != nil
             request.client = client
             var line = await client.recvLine()
             if line == "":
@@ -175,15 +174,6 @@ proc getCallbackParamters(port: Port, html: string): Future[Uri] {.async.} =
         if len(url) > 0:
             break
     result = parseUri url
-
-proc generateState*(): string =
-    ## Generate a state.
-    var r = 0
-    result = ""
-    randomize()
-    for i in 0..4:
-        r = rand(25)
-        result = result & chr(97 + r)
 
 proc parseRedirectUri(body: string): StringTableRef =
     let responses = body.split("&")
@@ -215,7 +205,7 @@ proc parseAuthorizationResponse*(uri: string): AuthorizationResponse =
     uri.parseUri().parseAuthorizationResponse()
 
 proc authorizationCodeGrant*(client: HttpClient | AsyncHttpClient,
-    authorizeUrl, accessTokenRequestUrl, clientId, clientSecret: string,
+    authorizeUrl, accessTokenRequestUrl, clientId, clientSecret, state: string,
     html: string = "", scope: seq[string] = @[],
     port: int = 8080): Future[Response | AsyncResponse] {.multisync, deprecated.} =
     ## Send a request for "Authorization Code Grant" type.
@@ -224,7 +214,6 @@ proc authorizationCodeGrant*(client: HttpClient | AsyncHttpClient,
     ## | When receiving the callback, check the state, and request an access token to the server.
     ## | Returns the request result of the access token.
     let
-        state = generateState()
         redirectUri = "http://localhost:" & $port
         authorizeUrl = getAuthorizationCodeGrantUrl(authorizeUrl, clientId, redirectUri, state, scope)
 
@@ -232,18 +221,17 @@ proc authorizationCodeGrant*(client: HttpClient | AsyncHttpClient,
     let
         uri = waitFor getCallbackParamters(Port(port), html)
         params = parseRedirectUri(uri.query)
-    assert params["state"] == state
+    doAssert params["state"] == state
     result = await client.getAuthorizationCodeAccessToken(accessTokenRequestUrl, params["code"],
         clientId, clientSecret, redirectUri)
 
-proc implicitGrant*(url, clientId: string, html: string = "",
+proc implicitGrant*(url, clientId, state: string, html: string = "",
     scope: openarray[string] = [], port: int = 8080): string {.deprecated.} =
     ## Send a request for "Implicit Grant" type.
     ## | This method, outputs a URL for the authorization request at first.
     ## | Then, wait for the callback at "http://localhost:${port}".
     ## | When receiving the callback, check the state, returns the Uri.query as a result.
     let
-        state = generateState()
         redirectUri = "http://localhost:" & $port
         url = getImplicitGrantUrl(url, clientId, redirectUri, state, scope)
 
@@ -252,7 +240,7 @@ proc implicitGrant*(url, clientId: string, html: string = "",
         uri = waitFor getCallbackParamters(Port(port), html)
         query = uri.query
         params = parseRedirectUri(query)
-    assert params["state"] == state
+    doAssert params["state"] == state
     result = query
 
 proc resourceOwnerPassCredsGrant*(client: HttpClient | AsyncHttpClient,
