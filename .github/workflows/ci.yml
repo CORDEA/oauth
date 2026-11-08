@@ -21,4 +21,5 @@ jobs:
         with:
           nim-version: ${{ matrix.nim }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - run: nimble install -y --depsOnly
       - run: nimble test -y
