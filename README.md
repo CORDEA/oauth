@@ -1,4 +1,4 @@
-![Build Status](https://github.com/CORDEA/oauth/actions/workflows/build.yml/badge.svg?branch=develop)
+![CI](https://github.com/CORDEA/oauth/actions/workflows/ci.yml/badge.svg?branch=develop)
 
 # oauth
 
